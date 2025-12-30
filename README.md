@@ -1,145 +1,277 @@
-# ISL.Railways
+# ISL Railways Management System
 
-A small Full Stack project for the Railways company - a web-based railway ticket booking system.
+A full-stack railway management application built with **React**, **.NET Core 8**, and **Microsoft SQL Server**.
 
-## Features
-
-- 🚂 **Train Schedule**: View all available trains with real-time status
-- 🎫 **Online Booking**: Book tickets with an intuitive form
-- 🔍 **Search Functionality**: Search trains by station names
-- 📱 **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- 💾 **Database Integration**: SQLite database for storing trains and bookings
-- 🎨 **Modern UI**: Clean and professional user interface
-
-## Technology Stack
+## 🚀 Technology Stack
 
 ### Frontend
-- HTML5
-- CSS3 (with responsive design)
-- JavaScript (Vanilla JS)
+- **React 18** - Modern UI library
+- **Vite** - Fast build tool and dev server
+- **Axios** - HTTP client for API calls
+- **CSS3** - Custom styling with responsive design
 
 ### Backend
-- Node.js
-- Express.js
-- SQLite3
-- CORS & Body Parser middleware
+- **.NET Core 8** - High-performance web API
+- **Entity Framework Core 8** - ORM for database operations
+- **ASP.NET Core** - Web API framework
+- **Swagger** - API documentation
 
-## Project Structure
+### Database
+- **Microsoft SQL Server** - Enterprise-grade relational database
+- 2 Tables: **Station** and **Train**
 
-```
-ISL.Railways/
-├── public/
-│   ├── css/
-│   │   └── styles.css          # Stylesheet
-│   ├── js/
-│   │   └── app.js              # Frontend JavaScript
-│   └── index.html              # Main HTML page
-├── server/
-│   └── index.js                # Express server & API
-├── package.json                # Node.js dependencies
-├── .gitignore                  # Git ignore rules
-└── README.md                   # This file
+## 📋 Database Schema
+
+### Station Table
+```sql
+Number (INT, Primary Key, Range: 1000-8000)
+Name (NVARCHAR(100), Required)
 ```
 
-## Installation
+### Train Table
+```sql
+Number (INT, Primary Key, Range: 10-100)
+Origin (INT, Foreign Key → Station.Number)
+Destination (INT, Foreign Key → Station.Number)
+```
 
-1. **Clone the repository**:
+## 🛠️ Setup Instructions
+
+### Prerequisites
+- **.NET SDK 8.0** or higher
+- **Node.js 18** or higher
+- **Microsoft SQL Server** (2019 or later)
+- **SQL Server Management Studio** (optional, for database management)
+
+### 1. Database Setup
+
+1. Open SQL Server Management Studio
+2. Connect to your SQL Server instance
+3. Run the database creation script:
    ```bash
-   git clone https://github.com/Startrek1977/ISL.Railways.git
-   cd ISL.Railways
+   # The script is located at: database-script.sql
+   ```
+4. This will:
+   - Create the `RailwayDB` database
+   - Create `Station` and `Train` tables with constraints
+   - Insert sample data (5 stations and 6 trains)
+
+### 2. Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
    ```
 
-2. **Install dependencies**:
+2. Update the connection string in `appsettings.json`:
+   ```json
+   {
+     "ConnectionStrings": {
+       "RailwayDatabase": "Server=YOUR_SERVER_NAME;Database=RailwayDB;User Id=YOUR_USERNAME;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+     }
+   }
+   ```
+   
+   Replace:
+   - `YOUR_SERVER_NAME` - Your SQL Server instance (e.g., `localhost` or `.\SQLEXPRESS`)
+   - `YOUR_USERNAME` - Your SQL Server username
+   - `YOUR_PASSWORD` - Your SQL Server password
+
+3. Restore dependencies and run:
+   ```bash
+   dotnet restore
+   dotnet run
+   ```
+
+   The API will start at `https://localhost:5000` (or `http://localhost:5001`)
+
+### 3. Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-## Running the Application
-
-1. **Start the server**:
+3. Start the development server:
    ```bash
-   npm start
+   npm run dev
    ```
 
-2. **Access the application**:
-   Open your web browser and navigate to:
-   ```
-   http://localhost:3000
-   ```
+   The React app will start at `http://localhost:5173`
 
-## API Endpoints
+## 🎯 Features
 
-### Train Schedule
-- **GET** `/api/schedule` - Get all trains
-- **GET** `/api/schedule?from=Station1&to=Station2` - Get trains between specific stations
-- **GET** `/api/trains/:trainNumber` - Get specific train details
+### Station Management
+- ✅ View all stations
+- ✅ Add new stations (Number: 1000-8000)
+- ✅ Edit existing stations
+- ✅ Delete stations
+- ✅ Input validation
 
-### Bookings
-- **POST** `/api/bookings` - Create a new booking
-- **GET** `/api/bookings` - Get all bookings
-- **GET** `/api/bookings/:bookingId` - Get specific booking details
+### Train Management
+- ✅ View all trains with origin/destination names
+- ✅ Add new trains (Number: 10-100)
+- ✅ Edit train routes
+- ✅ Delete trains
+- ✅ Foreign key validation
+- ✅ Prevent same origin/destination
 
-## Usage
+## 🌐 API Endpoints
 
-### Viewing Train Schedule
-1. Navigate to the "Schedule" section
-2. View all available trains with their routes and timings
-3. Use the search box to filter trains by station name
+### Stations
+```
+GET    /api/stations        - Get all stations
+GET    /api/stations/{id}   - Get station by number
+POST   /api/stations        - Create new station
+PUT    /api/stations/{id}   - Update station
+DELETE /api/stations/{id}   - Delete station
+```
 
-### Booking a Ticket
-1. Go to the "Book Ticket" section
-2. Fill in the required information:
-   - Passenger name
-   - Email address
-   - From and To stations
-   - Travel date
-   - Select train
-   - Number of passengers
-   - Class (Economy/Business/First Class)
-3. Click "Book Now"
-4. You'll receive a booking confirmation with a unique booking ID
+### Trains
+```
+GET    /api/trains          - Get all trains (with station names)
+GET    /api/trains/{id}     - Get train by number
+POST   /api/trains          - Create new train
+PUT    /api/trains/{id}     - Update train
+DELETE /api/trains/{id}     - Delete train
+```
 
-## Sample Train Data
+## 📦 Project Structure
 
-The application comes pre-loaded with 10 sample trains covering routes between:
-- Central Station
-- North Terminal
-- South Junction
-- East Plaza
-- West End
+```
+ISL.Railways/
+├── backend/                      # .NET Core API
+│   ├── Controllers/              # API Controllers
+│   │   ├── StationsController.cs
+│   │   └── TrainsController.cs
+│   ├── Data/                     # Database Context
+│   │   └── RailwayDbContext.cs
+│   ├── Models/                   # Entity Models
+│   │   ├── Station.cs
+│   │   └── Train.cs
+│   ├── Program.cs                # Application entry point
+│   ├── appsettings.json          # Configuration (connection string)
+│   └── RailwayAPI.csproj         # Project file
+│
+├── frontend/                     # React Application
+│   ├── src/
+│   │   ├── components/           # React Components
+│   │   │   ├── StationList.jsx
+│   │   │   ├── StationList.css
+│   │   │   ├── TrainList.jsx
+│   │   │   └── TrainList.css
+│   │   ├── App.jsx               # Main App Component
+│   │   ├── App.css               # App Styles
+│   │   └── main.jsx              # React entry point
+│   ├── package.json              # Frontend dependencies
+│   └── vite.config.js            # Vite configuration
+│
+├── database-script.sql           # Database creation script
+├── README.md                     # This file
+└── .gitignore                    # Git ignore rules
+```
 
-## Development
+## 🔧 Development
 
-To modify the application:
+### Running in Development Mode
 
-- **Frontend**: Edit files in the `public/` directory
-  - `public/index.html` - HTML structure
-  - `public/css/styles.css` - Styling
-  - `public/js/app.js` - Client-side logic
+**Terminal 1 - Backend:**
+```bash
+cd backend
+dotnet watch run
+```
 
-- **Backend**: Edit `server/index.js` for:
-  - API endpoints
-  - Database schema
-  - Business logic
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
 
-## Future Enhancements
+### Building for Production
 
-Potential improvements for the application:
-- User authentication and login system
-- Payment gateway integration
-- Email notifications for bookings
-- Seat selection interface
-- Booking history and management
-- Admin panel for managing trains
-- Real-time train tracking
-- Multiple language support
+**Backend:**
+```bash
+cd backend
+dotnet publish -c Release -o ./publish
+```
 
-## License
+**Frontend:**
+```bash
+cd frontend
+npm run build
+```
 
-MIT License
+The production build will be in the `frontend/dist` directory.
 
-## Contact
+## 🧪 Testing the API
 
-For questions or support, please contact:
-- Email: info@islrailways.com
-- Phone: +1-800-RAILWAY
+### Using Swagger UI
+Navigate to `https://localhost:5000/swagger` to test the API endpoints interactively.
+
+### Using curl
+
+**Create a Station:**
+```bash
+curl -X POST https://localhost:5000/api/stations \
+  -H "Content-Type: application/json" \
+  -d '{"number": 6000, "name": "Airport Station"}'
+```
+
+**Get All Trains:**
+```bash
+curl https://localhost:5000/api/trains
+```
+
+## 🛡️ Validation Rules
+
+### Station
+- Number must be between 1000 and 8000
+- Name is required (max 100 characters)
+- Number must be unique
+
+### Train
+- Number must be between 10 and 100
+- Origin and Destination must be valid station numbers
+- Origin and Destination cannot be the same
+- Referenced stations must exist in the database
+- Number must be unique
+
+## 📝 Sample Data
+
+The `database-script.sql` includes sample data:
+
+**Stations:**
+- 1000 - Central Station
+- 2000 - North Terminal
+- 3000 - South Junction
+- 4000 - East Plaza
+- 5000 - West End
+
+**Trains:**
+- Train 10: Central Station → North Terminal
+- Train 20: North Terminal → South Junction
+- Train 30: Central Station → East Plaza
+- Train 40: South Junction → West End
+- Train 50: East Plaza → North Terminal
+- Train 60: West End → Central Station
+
+## 🤝 Contributing
+
+This is a demonstration project showcasing full-stack development with modern technologies.
+
+## 📄 License
+
+MIT License - feel free to use this project for learning purposes.
+
+## 📧 Contact
+
+For questions or feedback about this project, please open an issue in the repository.
+
+---
+
+**Built with ❤️ using React + .NET Core + SQL Server**

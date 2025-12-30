@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import './TrainList.css';
-
-const API_URL = 'http://localhost:5000/api';
 
 function TrainList() {
   const [trains, setTrains] = useState([]);

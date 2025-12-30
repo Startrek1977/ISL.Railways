@@ -26,6 +26,7 @@ npm-debug.log*
 *.db
 *.sqlite
 *.sqlite3
+railway.db
 
 # Temporary files
 tmp/

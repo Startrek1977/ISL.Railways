@@ -12,8 +12,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Database setup
-const db = new sqlite3.Database(':memory:', (err) => {
+// Database setup - using persistent file storage for data retention
+const db = new sqlite3.Database('./railway.db', (err) => {
     if (err) {
         console.error('Error opening database:', err);
     } else {
@@ -26,7 +26,7 @@ const db = new sqlite3.Database(':memory:', (err) => {
 function initializeDatabase() {
     // Create trains table
     db.run(`
-        CREATE TABLE trains (
+        CREATE TABLE IF NOT EXISTS trains (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             trainNumber TEXT NOT NULL UNIQUE,
             trainName TEXT NOT NULL,
@@ -40,14 +40,21 @@ function initializeDatabase() {
         if (err) {
             console.error('Error creating trains table:', err);
         } else {
-            // Insert sample train data
-            insertSampleTrains();
+            // Check if trains table is empty before inserting sample data
+            db.get('SELECT COUNT(*) as count FROM trains', [], (err, row) => {
+                if (err) {
+                    console.error('Error checking trains table:', err);
+                } else if (row.count === 0) {
+                    // Insert sample train data only if table is empty
+                    insertSampleTrains();
+                }
+            });
         }
     });
 
     // Create bookings table
     db.run(`
-        CREATE TABLE bookings (
+        CREATE TABLE IF NOT EXISTS bookings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             bookingId TEXT NOT NULL UNIQUE,
             passengerName TEXT NOT NULL,
@@ -158,8 +165,17 @@ app.post('/api/bookings', (req, res) => {
         return res.status(400).json({ message: 'From and To stations cannot be the same' });
     }
     
-    // Generate booking ID
-    const bookingId = 'BK' + Date.now() + Math.floor(Math.random() * 1000);
+    // Generate booking ID with timestamp and random component for better uniqueness
+    // Format: BK-YYYYMMDDHHMMSS-XXXX where XXXX is a random 4-digit number
+    const now = new Date();
+    const timestamp = now.getFullYear().toString() + 
+                     (now.getMonth() + 1).toString().padStart(2, '0') + 
+                     now.getDate().toString().padStart(2, '0') + 
+                     now.getHours().toString().padStart(2, '0') + 
+                     now.getMinutes().toString().padStart(2, '0') + 
+                     now.getSeconds().toString().padStart(2, '0');
+    const randomPart = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    const bookingId = `BK-${timestamp}-${randomPart}`;
     
     // Insert booking
     const query = `

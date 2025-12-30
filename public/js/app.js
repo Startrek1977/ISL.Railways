@@ -1,5 +1,5 @@
-// API Base URL
-const API_BASE_URL = 'http://localhost:3000/api';
+// API Base URL - use relative path for production compatibility
+const API_BASE_URL = '/api';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {

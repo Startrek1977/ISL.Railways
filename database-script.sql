@@ -35,17 +35,19 @@ BEGIN
 END
 GO
 
--- Insert Sample Stations
+-- Insert Israeli Railway Stations (seeded once, not to be changed)
 IF NOT EXISTS (SELECT 1 FROM Station)
 BEGIN
     INSERT INTO Station (Number, Name) VALUES
-        (1000, 'Central Station'),
-        (2000, 'North Terminal'),
-        (3000, 'South Junction'),
-        (4000, 'East Plaza'),
-        (5000, 'West End');
+        (1000, 'Tel Aviv Savidor'),
+        (2000, 'Tel Aviv HaShalom'),
+        (3000, 'Haifa Hof HaCarmel'),
+        (4000, 'Beer Sheva Center'),
+        (5000, 'Nahariya'),
+        (6000, 'Benyamina'),
+        (7000, 'Herzliya');
     
-    PRINT 'Sample stations inserted successfully';
+    PRINT 'Israeli railway stations inserted successfully';
 END
 GO
 
@@ -53,15 +55,16 @@ GO
 IF NOT EXISTS (SELECT 1 FROM Train)
 BEGIN
     INSERT INTO Train (Number, Origin, Destination) VALUES
-        (10, 1000, 2000),  -- Central to North
-        (20, 2000, 3000),  -- North to South
-        (30, 1000, 4000),  -- Central to East
-        (40, 3000, 5000),  -- South to West
-        (50, 4000, 2000),  -- East to North
-        (60, 5000, 1000);  -- West to Central
+        (10, 1000, 3000),  -- Tel Aviv Savidor to Haifa Hof HaCarmel
+        (20, 3000, 1000),  -- Haifa Hof HaCarmel to Tel Aviv Savidor
+        (30, 1000, 4000),  -- Tel Aviv Savidor to Beer Sheva Center
+        (40, 2000, 5000),  -- Tel Aviv HaShalom to Nahariya
+        (50, 6000, 7000),  -- Benyamina to Herzliya
+        (60, 7000, 2000);  -- Herzliya to Tel Aviv HaShalom
     
     PRINT 'Sample trains inserted successfully';
 END
 GO
 
 PRINT 'Database setup completed successfully';
+

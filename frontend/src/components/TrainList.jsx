@@ -100,8 +100,8 @@ function TrainList() {
     setEditingTrainNumber(train.number);
     setEditingTrain({
       number: train.number,
-      origin: train.origin,
-      destination: train.destination
+      origin: train.origin.toString(),
+      destination: train.destination.toString()
     });
     setError('');
   };

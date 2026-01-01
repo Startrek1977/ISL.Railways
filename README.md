@@ -1,2 +1,277 @@
-# ISL.Railways
-A small Full Stack project for the Railways company
+# ISL Railways Management System
+
+A full-stack railway management application built with **React**, **.NET Core 8**, and **Microsoft SQL Server**.
+
+## 🚀 Technology Stack
+
+### Frontend
+- **React 18** - Modern UI library
+- **Vite** - Fast build tool and dev server
+- **Axios** - HTTP client for API calls
+- **CSS3** - Custom styling with responsive design
+
+### Backend
+- **.NET Core 8** - High-performance web API
+- **Entity Framework Core 8** - ORM for database operations
+- **ASP.NET Core** - Web API framework
+- **Swagger** - API documentation
+
+### Database
+- **Microsoft SQL Server** - Enterprise-grade relational database
+- 2 Tables: **Station** and **Train**
+
+## 📋 Database Schema
+
+### Station Table
+```sql
+Number (INT, Primary Key, Range: 1000-8000)
+Name (NVARCHAR(100), Required)
+```
+
+### Train Table
+```sql
+Number (INT, Primary Key, Range: 10-100)
+Origin (INT, Foreign Key → Station.Number)
+Destination (INT, Foreign Key → Station.Number)
+```
+
+## 🛠️ Setup Instructions
+
+### Prerequisites
+- **.NET SDK 8.0** or higher
+- **Node.js 18** or higher
+- **Microsoft SQL Server** (2019 or later)
+- **SQL Server Management Studio** (optional, for database management)
+
+### 1. Database Setup
+
+1. Open SQL Server Management Studio
+2. Connect to your SQL Server instance
+3. Run the database creation script:
+   ```bash
+   # The script is located at: database-script.sql
+   ```
+4. This will:
+   - Create the `RailwayDB` database
+   - Create `Station` and `Train` tables with constraints
+   - Insert sample data (5 stations and 6 trains)
+
+### 2. Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+
+2. Update the connection string in `appsettings.json`:
+   ```json
+   {
+     "ConnectionStrings": {
+       "RailwayDatabase": "Server=YOUR_SERVER_NAME;Database=RailwayDB;User Id=YOUR_USERNAME;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+     }
+   }
+   ```
+   
+   Replace:
+   - `YOUR_SERVER_NAME` - Your SQL Server instance (e.g., `localhost` or `.\SQLEXPRESS`)
+   - `YOUR_USERNAME` - Your SQL Server username
+   - `YOUR_PASSWORD` - Your SQL Server password
+
+3. Restore dependencies and run:
+   ```bash
+   dotnet restore
+   dotnet run
+   ```
+
+   The API will start at `https://localhost:5000` (or `http://localhost:5001`)
+
+### 3. Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+   The React app will start at `http://localhost:5173`
+
+## 🎯 Features
+
+### Station Management
+- ✅ View all stations
+- ✅ Add new stations (Number: 1000-8000)
+- ✅ Edit existing stations
+- ✅ Delete stations
+- ✅ Input validation
+
+### Train Management
+- ✅ View all trains with origin/destination names
+- ✅ Add new trains (Number: 10-100)
+- ✅ Edit train routes
+- ✅ Delete trains
+- ✅ Foreign key validation
+- ✅ Prevent same origin/destination
+
+## 🌐 API Endpoints
+
+### Stations
+```
+GET    /api/stations        - Get all stations
+GET    /api/stations/{id}   - Get station by number
+POST   /api/stations        - Create new station
+PUT    /api/stations/{id}   - Update station
+DELETE /api/stations/{id}   - Delete station
+```
+
+### Trains
+```
+GET    /api/trains          - Get all trains (with station names)
+GET    /api/trains/{id}     - Get train by number
+POST   /api/trains          - Create new train
+PUT    /api/trains/{id}     - Update train
+DELETE /api/trains/{id}     - Delete train
+```
+
+## 📦 Project Structure
+
+```
+ISL.Railways/
+├── backend/                      # .NET Core API
+│   ├── Controllers/              # API Controllers
+│   │   ├── StationsController.cs
+│   │   └── TrainsController.cs
+│   ├── Data/                     # Database Context
+│   │   └── RailwayDbContext.cs
+│   ├── Models/                   # Entity Models
+│   │   ├── Station.cs
+│   │   └── Train.cs
+│   ├── Program.cs                # Application entry point
+│   ├── appsettings.json          # Configuration (connection string)
+│   └── RailwayAPI.csproj         # Project file
+│
+├── frontend/                     # React Application
+│   ├── src/
+│   │   ├── components/           # React Components
+│   │   │   ├── StationList.jsx
+│   │   │   ├── StationList.css
+│   │   │   ├── TrainList.jsx
+│   │   │   └── TrainList.css
+│   │   ├── App.jsx               # Main App Component
+│   │   ├── App.css               # App Styles
+│   │   └── main.jsx              # React entry point
+│   ├── package.json              # Frontend dependencies
+│   └── vite.config.js            # Vite configuration
+│
+├── database-script.sql           # Database creation script
+├── README.md                     # This file
+└── .gitignore                    # Git ignore rules
+```
+
+## 🔧 Development
+
+### Running in Development Mode
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+dotnet watch run
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+### Building for Production
+
+**Backend:**
+```bash
+cd backend
+dotnet publish -c Release -o ./publish
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run build
+```
+
+The production build will be in the `frontend/dist` directory.
+
+## 🧪 Testing the API
+
+### Using Swagger UI
+Navigate to `https://localhost:5000/swagger` to test the API endpoints interactively.
+
+### Using curl
+
+**Create a Station:**
+```bash
+curl -X POST https://localhost:5000/api/stations \
+  -H "Content-Type: application/json" \
+  -d '{"number": 6000, "name": "Airport Station"}'
+```
+
+**Get All Trains:**
+```bash
+curl https://localhost:5000/api/trains
+```
+
+## 🛡️ Validation Rules
+
+### Station
+- Number must be between 1000 and 8000
+- Name is required (max 100 characters)
+- Number must be unique
+
+### Train
+- Number must be between 10 and 100
+- Origin and Destination must be valid station numbers
+- Origin and Destination cannot be the same
+- Referenced stations must exist in the database
+- Number must be unique
+
+## 📝 Sample Data
+
+The `database-script.sql` includes sample data:
+
+**Stations:**
+- 1000 - Central Station
+- 2000 - North Terminal
+- 3000 - South Junction
+- 4000 - East Plaza
+- 5000 - West End
+
+**Trains:**
+- Train 10: Central Station → North Terminal
+- Train 20: North Terminal → South Junction
+- Train 30: Central Station → East Plaza
+- Train 40: South Junction → West End
+- Train 50: East Plaza → North Terminal
+- Train 60: West End → Central Station
+
+## 🤝 Contributing
+
+This is a demonstration project showcasing full-stack development with modern technologies.
+
+## 📄 License
+
+MIT License - feel free to use this project for learning purposes.
+
+## 📧 Contact
+
+For questions or feedback about this project, please open an issue in the repository.
+
+---
+
+**Built with ❤️ using React + .NET Core + SQL Server**

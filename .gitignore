@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.dbmdl
+*.jfm
+appsettings.Development.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+railway.db
+
+# Build outputs
+dist/
+build/
+out/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,15 @@
+---
+title: Move Seed Data for Stations to DB Creation Script
+created_by: Startrek1977
+created_at: 2026-01-02 22:58:17
+assignees: []
+state: open
+content: |
+  Currently, the seed data for Israeli railway stations is specified in the `OnModelCreating` method of the `RailwayDbContext` using the `.HasData` method. To follow the best practices and achieve better separation of concerns, the seed data should be moved to a dedicated database creation script. This involves:
+
+  1. Removing the `.HasData` call for stations in `RailwayDbContext`.
+  2. Writing a new SQL script to insert the station data into the `Station` table.
+  3. Integrating the script with the database initialization process to be applied during database provisioning.
+
+  The new approach will enable better modularity, environment-specific setups, and remove dependency on Entity Framework migrations for data seeding.
+labels: []

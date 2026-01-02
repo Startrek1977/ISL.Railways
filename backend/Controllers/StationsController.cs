@@ -5,6 +5,11 @@ using RailwayAPI.Models;
 
 namespace RailwayAPI.Controllers
 {
+    /// <summary>
+    /// Read-only controller for stations.
+    /// Stations are seeded at database initialization and are immutable at runtime.
+    /// To modify stations, update the seed data in RailwayDbContext and recreate the database.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class StationsController : ControllerBase
@@ -37,80 +42,6 @@ namespace RailwayAPI.Controllers
             }
 
             return station;
-        }
-
-        // POST: api/Stations
-        [HttpPost]
-        public async Task<ActionResult<Station>> PostStation(Station station)
-        {
-            if (station.Number < 1000 || station.Number > 8000)
-            {
-                return BadRequest("Station number must be between 1000 and 8000");
-            }
-
-            _context.Stations.Add(station);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (StationExists(station.Number))
-                {
-                    return Conflict("Station with this number already exists");
-                }
-                throw;
-            }
-
-            return CreatedAtAction(nameof(GetStation), new { number = station.Number }, station);
-        }
-
-        // PUT: api/Stations/5
-        [HttpPut("{number}")]
-        public async Task<IActionResult> PutStation(int number, Station station)
-        {
-            if (number != station.Number)
-            {
-                return BadRequest("Station number mismatch");
-            }
-
-            _context.Entry(station).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StationExists(number))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/Stations/5
-        [HttpDelete("{number}")]
-        public async Task<IActionResult> DeleteStation(int number)
-        {
-            var station = await _context.Stations.FindAsync(number);
-            if (station == null)
-            {
-                return NotFound();
-            }
-
-            _context.Stations.Remove(station);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool StationExists(int number)
-        {
-            return _context.Stations.Any(e => e.Number == number);
         }
     }
 }

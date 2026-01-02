@@ -33,6 +33,36 @@ body {
   opacity: 0.9;
 }
 
+.app-nav {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.app-nav button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.app-nav button:hover {
+  background-color: #bdc3c7;
+}
+
+.app-nav button.active {
+  background-color: #3498db;
+  color: white;
+}
+
 .app-content {
   flex: 1;
   max-width: 1400px;

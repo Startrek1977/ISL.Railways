@@ -40,6 +40,18 @@ namespace RailwayAPI.Data
                     .HasForeignKey(t => t.Destination)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // Seed Israeli Railway Stations
+            // These stations are static and should not be modified at runtime
+            modelBuilder.Entity<Station>().HasData(
+                new Station { Number = 1000, Name = "Tel Aviv Savidor" },
+                new Station { Number = 2000, Name = "Tel Aviv HaShalom" },
+                new Station { Number = 3000, Name = "Haifa Hof HaCarmel" },
+                new Station { Number = 4000, Name = "Beer Sheva Center" },
+                new Station { Number = 5000, Name = "Nahariya" },
+                new Station { Number = 6000, Name = "Benyamina" },
+                new Station { Number = 7000, Name = "Herzliya" }
+            );
         }
     }
 }

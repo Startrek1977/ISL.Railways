@@ -8,10 +8,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure DbContext with SQL Server
+// Configure DbContext with SQL Server or InMemory for testing
 // Connection string placeholder - update in appsettings.json
-builder.Services.AddDbContext<RailwayDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RailwayDatabase")));
+var connectionString = builder.Configuration.GetConnectionString("RailwayDatabase");
+if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("YOUR_SERVER_NAME"))
+{
+    // Use InMemory database for testing when SQL Server is not configured
+    builder.Services.AddDbContext<RailwayDbContext>(options =>
+        options.UseInMemoryDatabase("RailwayDB"));
+}
+else
+{
+    builder.Services.AddDbContext<RailwayDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
 
 // Add CORS for React frontend
 builder.Services.AddCors(options =>
@@ -26,6 +36,13 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<RailwayDbContext>();
+    context.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

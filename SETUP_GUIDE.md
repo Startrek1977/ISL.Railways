@@ -51,9 +51,11 @@ Frontend runs at: `http://localhost:5173`
 ### 5. Test the Application
 
 1. Open browser to `http://localhost:5173`
-2. Try adding a station (e.g., 6000 - Airport)
-3. Try adding a train (e.g., 11, from station 6000 to 1000)
-4. Test edit and delete operations
+2. View the pre-seeded stations (read-only)
+3. Try adding a train (e.g., 11, from station 1000 to 3000)
+4. Test edit and delete operations on trains
+
+**Note:** Stations are pre-seeded and cannot be modified. Only trains can be added, edited, or deleted.
 
 ## Troubleshooting
 
@@ -80,6 +82,8 @@ React Frontend (Port 5173)
 .NET Core API (Port 5000)
     ↓ EF Core
 SQL Server Database (RailwayDB)
+    - Stations (pre-seeded, immutable)
+    - Trains (dynamic, modifiable)
 ```
 
 ## Default Credentials

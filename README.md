@@ -28,6 +28,8 @@ Number (INT, Primary Key, Range: 1000-8000)
 Name (NVARCHAR(100), Required)
 ```
 
+**Note:** Stations are pre-seeded and immutable at runtime. They represent the Israeli railway network and cannot be modified through the API.
+
 ### Train Table
 ```sql
 Number (INT, Primary Key, Range: 10-100)
@@ -54,7 +56,8 @@ Destination (INT, Foreign Key → Station.Number)
 4. This will:
    - Create the `RailwayDB` database
    - Create `Station` and `Train` tables with constraints
-   - Insert sample data (5 stations and 6 trains)
+   - Seed Israeli railway stations (immutable data)
+   - Insert sample trains (modifiable data)
 
 ### 2. Backend Setup
 
@@ -107,11 +110,11 @@ Destination (INT, Foreign Key → Station.Number)
 ## 🎯 Features
 
 ### Station Management
-- ✅ View all stations
-- ✅ Add new stations (Number: 1000-8000)
-- ✅ Edit existing stations
-- ✅ Delete stations
-- ✅ Input validation
+- ✅ View all stations (read-only)
+- ✅ Stations are pre-seeded and immutable
+- ✅ Represents Israeli railway network
+
+**Note:** Stations cannot be added, edited, or deleted at runtime. They are seeded during database initialization and represent the fixed Israeli railway network.
 
 ### Train Management
 - ✅ View all trains with origin/destination names
@@ -123,14 +126,13 @@ Destination (INT, Foreign Key → Station.Number)
 
 ## 🌐 API Endpoints
 
-### Stations
+### Stations (Read-Only)
 ```
 GET    /api/stations        - Get all stations
 GET    /api/stations/{id}   - Get station by number
-POST   /api/stations        - Create new station
-PUT    /api/stations/{id}   - Update station
-DELETE /api/stations/{id}   - Delete station
 ```
+
+**Note:** Stations are immutable. POST, PUT, and DELETE operations are not available.
 
 ### Trains
 ```
@@ -215,16 +217,21 @@ Navigate to `https://localhost:5000/swagger` to test the API endpoints interacti
 
 ### Using curl
 
-**Create a Station:**
+**Get All Stations:**
 ```bash
-curl -X POST https://localhost:5000/api/stations \
-  -H "Content-Type: application/json" \
-  -d '{"number": 6000, "name": "Airport Station"}'
+curl https://localhost:5000/api/stations
 ```
 
 **Get All Trains:**
 ```bash
 curl https://localhost:5000/api/trains
+```
+
+**Create a New Train:**
+```bash
+curl -X POST https://localhost:5000/api/trains \
+  -H "Content-Type: application/json" \
+  -d '{"number": 11, "origin": 1000, "destination": 3000}'
 ```
 
 ## 🛡️ Validation Rules
@@ -233,6 +240,7 @@ curl https://localhost:5000/api/trains
 - Number must be between 1000 and 8000
 - Name is required (max 100 characters)
 - Number must be unique
+- **Stations are pre-seeded and immutable** - cannot be modified at runtime
 
 ### Train
 - Number must be between 10 and 100
@@ -245,20 +253,22 @@ curl https://localhost:5000/api/trains
 
 The `database-script.sql` includes sample data:
 
-**Stations:**
-- 1000 - Central Station
-- 2000 - North Terminal
-- 3000 - South Junction
-- 4000 - East Plaza
-- 5000 - West End
+**Stations (Pre-seeded, Immutable):**
+- 1000 - Tel Aviv Savidor
+- 2000 - Tel Aviv HaShalom
+- 3000 - Haifa Hof HaCarmel
+- 4000 - Beer Sheva Center
+- 5000 - Nahariya
+- 6000 - Benyamina
+- 7000 - Herzliya
 
-**Trains:**
-- Train 10: Central Station → North Terminal
-- Train 20: North Terminal → South Junction
-- Train 30: Central Station → East Plaza
-- Train 40: South Junction → West End
-- Train 50: East Plaza → North Terminal
-- Train 60: West End → Central Station
+**Trains (Sample data, can be modified):**
+- Train 10: Tel Aviv Savidor → Haifa Hof HaCarmel
+- Train 20: Haifa Hof HaCarmel → Tel Aviv Savidor
+- Train 30: Tel Aviv Savidor → Beer Sheva Center
+- Train 40: Tel Aviv HaShalom → Nahariya
+- Train 50: Benyamina → Herzliya
+- Train 60: Herzliya → Tel Aviv HaShalom
 
 ## 🤝 Contributing
 

@@ -64,17 +64,13 @@
 ### Frontend Components
 
 #### StationList Component
-- **Purpose**: Manage railway stations
+- **Purpose**: View railway stations (read-only)
 - **Features**:
   - Display all stations in a table
-  - Add new stations (validation: 1000-8000)
-  - Edit existing station names
-  - Delete stations (with confirmation)
+  - Stations are pre-seeded and immutable
+  - Informational display only
 - **API Calls**:
   - GET /api/stations
-  - POST /api/stations
-  - PUT /api/stations/{id}
-  - DELETE /api/stations/{id}
 
 #### TrainList Component
 - **Purpose**: Manage trains and routes
@@ -100,17 +96,14 @@ public class StationsController : ControllerBase
 {
     // GET: api/Stations
     // GET: api/Stations/5
-    // POST: api/Stations
-    // PUT: api/Stations/5
-    // DELETE: api/Stations/5
 }
 ```
 
 **Responsibilities**:
-- CRUD operations for stations
-- Validate station number range (1000-8000)
-- Handle duplicate number conflicts
+- Read-only operations for stations
+- Return list of pre-seeded stations
 - Return appropriate HTTP status codes
+- **Note:** Stations are immutable - no POST/PUT/DELETE endpoints
 
 #### TrainsController
 ```csharp
@@ -142,6 +135,9 @@ CREATE TABLE Station (
     Name NVARCHAR(100) NOT NULL,
     CONSTRAINT CHK_Station_Range CHECK (Number >= 1000 AND Number <= 8000)
 );
+
+-- Stations are seeded at database creation and are immutable
+-- Seeded via Entity Framework Core HasData() in RailwayDbContext
 ```
 
 #### Train Table
@@ -161,24 +157,24 @@ CREATE TABLE Train (
 
 ## Data Flow
 
-### Adding a New Station
+### Viewing Stations (Read-Only)
 
 ```
-User Input (React)
+User Request (React)
     │
-    ├─> Validate in Frontend (1000-8000)
-    │
-    └─> POST /api/stations
+    └─> GET /api/stations
             │
-            ├─> StationsController.PostStation()
+            ├─> StationsController.GetStations()
             │       │
-            │       ├─> Validate range
-            │       ├─> Add to DbContext
-            │       └─> SaveChangesAsync()
+            │       ├─> Query DbContext
+            │       └─> Return seeded stations
             │
-            └─> SQL INSERT INTO Station
+            └─> SQL SELECT * FROM Station
                     │
-                    └─> Return 201 Created
+                    └─> Return 200 OK with station list
+
+Note: Stations are pre-seeded in RailwayDbContext.OnModelCreating()
+      and cannot be modified at runtime.
 ```
 
 ### Adding a New Train

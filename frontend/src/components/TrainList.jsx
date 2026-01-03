@@ -45,7 +45,7 @@ function TrainList() {
   const getNextTrainNumber = () => {
     if (trains.length === 0) return 10;
     const maxNumber = Math.max(...trains.map(t => t.number));
-    return maxNumber < 100 ? maxNumber + 1 : null;
+    return maxNumber + 10 <= 100 ? maxNumber + 10 : null;
   };
 
   const handleAddNewTrain = () => {

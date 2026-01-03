@@ -14,19 +14,13 @@ GO
 
 -- Drop existing tables (in reverse order of dependencies)
 -- Drop Train table first because it has foreign key references to Station
-IF EXISTS (SELECT * FROM sys.tables WHERE name = 'Train')
-BEGIN
-    DROP TABLE Train;
-    PRINT 'Existing Train table dropped';
-END
+DROP TABLE IF EXISTS Train;
+PRINT 'Existing Train table dropped (if it existed)';
 GO
 
 -- Drop Station table
-IF EXISTS (SELECT * FROM sys.tables WHERE name = 'Station')
-BEGIN
-    DROP TABLE Station;
-    PRINT 'Existing Station table dropped';
-END
+DROP TABLE IF EXISTS Station;
+PRINT 'Existing Station table dropped (if it existed)';
 GO
 
 -- Create Station Table
@@ -74,4 +68,4 @@ INSERT INTO Train (Number, Origin, Destination) VALUES
 PRINT 'Sample trains inserted successfully';
 GO
 
-PRINT 'Database setup completed successfully - Schema recreated with fresh data';
+PRINT 'Database setup completed successfully - Tables recreated with fresh data';

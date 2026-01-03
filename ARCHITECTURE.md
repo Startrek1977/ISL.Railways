@@ -77,6 +77,7 @@
 - **Features**:
   - Display all trains with origin/destination names
   - Add new trains (validation: 10-100)
+  - Automatic train number assignment (max + 10)
   - Edit train routes
   - Delete trains (with confirmation)
   - Prevent same origin/destination
@@ -85,6 +86,11 @@
   - POST /api/trains
   - PUT /api/trains/{id}
   - DELETE /api/trains/{id}
+- **Automatic Train Numbering**:
+  - When adding a new train, the system automatically assigns a train number
+  - The assigned number is 10 greater than the current highest train number
+  - If no trains exist, starts at the default value (10)
+  - Prevents exceeding the maximum allowed train number (100)
 
 ### Backend Controllers
 

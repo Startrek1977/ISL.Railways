@@ -119,6 +119,7 @@ Destination (INT, Foreign Key → Station.Number)
 ### Train Management
 - ✅ View all trains with origin/destination names
 - ✅ Add new trains (Number: 10-100)
+- ✅ Automatic train number assignment (current max + 10)
 - ✅ Edit train routes
 - ✅ Delete trains
 - ✅ Foreign key validation

@@ -18,8 +18,11 @@ namespace RailwayAPI.Controllers
 
         private static readonly string[] ValidDaysOfWeek = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-        // GET: api/Trains
-        // Optional date parameter for filtering by day of week
+        /// <summary>
+        /// Gets all trains, optionally filtered by date.
+        /// </summary>
+        /// <param name="date">Optional date to filter trains by day of week (e.g., 2024-01-15 returns Monday trains).</param>
+        /// <returns>List of trains with their origin and destination station details.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetTrains([FromQuery] DateTime? date = null)
         {
@@ -49,7 +52,11 @@ namespace RailwayAPI.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/Trains/5
+        /// <summary>
+        /// Gets a specific train by number.
+        /// </summary>
+        /// <param name="number">The train number.</param>
+        /// <returns>Train details with origin and destination station information.</returns>
         [HttpGet("{number}")]
         public async Task<ActionResult<object>> GetTrain(int number)
         {

@@ -86,7 +86,7 @@ Destination (INT, Foreign Key → Station.Number)
    dotnet run
    ```
 
-   The API will start at `https://localhost:5000` (or `http://localhost:5001`)
+   The API will start at `http://localhost:5201` 
 
 ### 3. Frontend Setup
 
@@ -214,23 +214,23 @@ The production build will be in the `frontend/dist` directory.
 ## 🧪 Testing the API
 
 ### Using Swagger UI
-Navigate to `https://localhost:5000/swagger` to test the API endpoints interactively.
+Navigate to `http://localhost:5201/swagger` to test the API endpoints interactively.
 
 ### Using curl
 
 **Get All Stations:**
 ```bash
-curl https://localhost:5000/api/stations
+curl http://localhost:5201/api/stations
 ```
 
 **Get All Trains:**
 ```bash
-curl https://localhost:5000/api/trains
+curl http://localhost:5201/api/trains
 ```
 
 **Create a New Train:**
 ```bash
-curl -X POST https://localhost:5000/api/trains \
+curl -X POST http://localhost:5201/api/trains \
   -H "Content-Type: application/json" \
   -d '{"number": 11, "origin": 1000, "destination": 3000}'
 ```

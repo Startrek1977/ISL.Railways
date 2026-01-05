@@ -9,6 +9,74 @@
   text-align: center;
 }
 
+.filter-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-controls label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.date-picker {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.btn-search,
+.btn-clear-filter {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-search {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-search:hover {
+  background-color: #2980b9;
+}
+
+.btn-clear-filter {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-clear-filter:hover {
+  background-color: #7f8c8d;
+}
+
+.filter-info {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #e3f2fd;
+  border-left: 4px solid #3498db;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  border-radius: 4px;
+}
+
 .table-actions {
   display: flex;
   justify-content: flex-end;
@@ -169,6 +237,17 @@
   .trains-table th,
   .trains-table td {
     padding: 10px 8px;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-picker,
+  .btn-search,
+  .btn-clear-filter {
+    width: 100%;
   }
 
   .table-actions {

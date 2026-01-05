@@ -13,16 +13,30 @@ function TrainList() {
   const [addingNewTrain, setAddingNewTrain] = useState(false);
   const [newTrain, setNewTrain] = useState(null);
   const [selectedTrain, setSelectedTrain] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [filterActive, setFilterActive] = useState(false);
+
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  // Helper function to get day of week from a date string
+  const getDayOfWeekFromDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', { weekday: 'long' });
+  };
 
   useEffect(() => {
     fetchTrains();
     fetchStations();
   }, []);
 
-  const fetchTrains = async () => {
+  const fetchTrains = async (dayOfWeek = null) => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/trains`);
+      let url = `${API_URL}/trains`;
+      if (dayOfWeek) {
+        url += `?dayOfWeek=${encodeURIComponent(dayOfWeek)}`;
+      }
+      const response = await axios.get(url);
       setTrains(response.data);
       setError('');
     } catch (err) {
@@ -42,6 +56,25 @@ function TrainList() {
     }
   };
 
+  const handleSearch = () => {
+    if (!selectedDate) {
+      setError('Please select a date to filter');
+      return;
+    }
+
+    const dayOfWeek = getDayOfWeekFromDate(selectedDate);
+    fetchTrains(dayOfWeek);
+    setFilterActive(true);
+    setError('');
+  };
+
+  const handleClearFilter = () => {
+    setSelectedDate('');
+    setFilterActive(false);
+    fetchTrains();
+    setError('');
+  };
+
   const getNextTrainNumber = () => {
     if (trains.length === 0) return 10;
     const maxNumber = Math.max(...trains.map(t => t.number));
@@ -54,7 +87,8 @@ function TrainList() {
     setNewTrain({
       number: nextNumber,
       origin: '',
-      destination: ''
+      destination: '',
+      dayOfWeek: 'Monday'
     });
     setAddingNewTrain(true);
     setError('');
@@ -71,15 +105,26 @@ function TrainList() {
       return;
     }
 
+    if (!newTrain.dayOfWeek) {
+      setError('Please select a day of week');
+      return;
+    }
+
     try {
       await axios.post(`${API_URL}/trains`, {
         number: newTrain.number,
         origin: parseInt(newTrain.origin),
-        destination: parseInt(newTrain.destination)
+        destination: parseInt(newTrain.destination),
+        dayOfWeek: newTrain.dayOfWeek
       });
       setAddingNewTrain(false);
       setNewTrain(null);
-      fetchTrains();
+      if (filterActive && selectedDate) {
+        const dayOfWeek = getDayOfWeekFromDate(selectedDate);
+        fetchTrains(dayOfWeek);
+      } else {
+        fetchTrains();
+      }
       setError('');
     } catch (err) {
       setError(err.response?.data || 'Failed to add train');
@@ -97,7 +142,8 @@ function TrainList() {
     setEditingTrain({
       number: train.number,
       origin: train.origin.toString(),
-      destination: train.destination.toString()
+      destination: train.destination.toString(),
+      dayOfWeek: train.dayOfWeek || 'Monday'
     });
     setError('');
   };
@@ -113,15 +159,26 @@ function TrainList() {
       return;
     }
 
+    if (!editingTrain.dayOfWeek) {
+      setError('Please select a day of week');
+      return;
+    }
+
     try {
       await axios.put(`${API_URL}/trains/${editingTrain.number}`, {
         number: editingTrain.number,
         origin: parseInt(editingTrain.origin),
-        destination: parseInt(editingTrain.destination)
+        destination: parseInt(editingTrain.destination),
+        dayOfWeek: editingTrain.dayOfWeek
       });
       setEditingTrainNumber(null);
       setEditingTrain(null);
-      fetchTrains();
+      if (filterActive && selectedDate) {
+        const dayOfWeek = getDayOfWeekFromDate(selectedDate);
+        fetchTrains(dayOfWeek);
+      } else {
+        fetchTrains();
+      }
       setError('');
     } catch (err) {
       setError(err.response?.data || 'Failed to update train');
@@ -144,7 +201,12 @@ function TrainList() {
       try {
         await axios.delete(`${API_URL}/trains/${selectedTrain}`);
         setSelectedTrain(null);
-        fetchTrains();
+        if (filterActive && selectedDate) {
+          const dayOfWeek = getDayOfWeekFromDate(selectedDate);
+          fetchTrains(dayOfWeek);
+        } else {
+          fetchTrains();
+        }
         setError('');
       } catch (err) {
         setError(err.response?.data || 'Failed to delete train');
@@ -163,6 +225,32 @@ function TrainList() {
       <h2>Train Schedule</h2>
       
       {error && <div className="error-message">{error}</div>}
+
+      <div className="filter-section">
+        <div className="filter-controls">
+          <label htmlFor="dateFilter">Filter by Date:</label>
+          <input
+            type="date"
+            id="dateFilter"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="date-picker"
+          />
+          <button onClick={handleSearch} className="btn-search">
+            Search
+          </button>
+          {filterActive && (
+            <button onClick={handleClearFilter} className="btn-clear-filter">
+              Clear Filter
+            </button>
+          )}
+        </div>
+        {filterActive && selectedDate && (
+          <div className="filter-info">
+            Showing trains for: {new Date(selectedDate).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
+        )}
+      </div>
 
       <div className="table-actions">
         <button onClick={handleAddNewTrain} className="btn-add" disabled={addingNewTrain}>
@@ -187,6 +275,7 @@ function TrainList() {
               <th>Origin Station Name</th>
               <th>Destination Station Number</th>
               <th>Destination Station Name</th>
+              <th>Day of Week</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -232,6 +321,19 @@ function TrainList() {
                   </select>
                 </td>
                 <td>
+                  <select 
+                    value={newTrain.dayOfWeek}
+                    onChange={(e) => setNewTrain({ ...newTrain, dayOfWeek: e.target.value })}
+                    className="station-select"
+                  >
+                    {daysOfWeek.map(day => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
                   <button onClick={handleSaveNewTrain} className="btn-save">Save</button>
                   <button onClick={handleCancelNewTrain} className="btn-cancel">Cancel</button>
                 </td>
@@ -239,7 +341,7 @@ function TrainList() {
             )}
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center' }}>No trains found</td>
+                <td colSpan="8" style={{ textAlign: 'center' }}>No trains found</td>
               </tr>
             ) : (
               trains.map((train) => (
@@ -292,6 +394,23 @@ function TrainList() {
                       </select>
                     ) : (
                       train.destinationName || 'N/A'
+                    )}
+                  </td>
+                  <td>
+                    {editingTrainNumber === train.number ? (
+                      <select 
+                        value={editingTrain.dayOfWeek}
+                        onChange={(e) => setEditingTrain({ ...editingTrain, dayOfWeek: e.target.value })}
+                        className="station-select"
+                      >
+                        {daysOfWeek.map(day => (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      train.dayOfWeek || 'N/A'
                     )}
                   </td>
                   <td>

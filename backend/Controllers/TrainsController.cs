@@ -10,6 +10,7 @@ namespace RailwayAPI.Controllers
     public class TrainsController : ControllerBase
     {
         private readonly RailwayDbContext _context;
+        private static readonly string[] ValidDays = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
         public TrainsController(RailwayDbContext context)
         {
@@ -18,11 +19,20 @@ namespace RailwayAPI.Controllers
 
         // GET: api/Trains
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetTrains()
+        public async Task<ActionResult<IEnumerable<object>>> GetTrains([FromQuery] string? dayOfWeek = null)
         {
-            return await _context.Trains
+            var query = _context.Trains
                 .Include(t => t.OriginStation)
                 .Include(t => t.DestinationStation)
+                .AsQueryable();
+
+            // Filter by day of week if provided
+            if (!string.IsNullOrWhiteSpace(dayOfWeek))
+            {
+                query = query.Where(t => t.DayOfWeek == dayOfWeek);
+            }
+
+            return await query
                 .OrderBy(t => t.Number)
                 .Select(t => new
                 {
@@ -30,7 +40,8 @@ namespace RailwayAPI.Controllers
                     t.Origin,
                     OriginName = t.OriginStation != null ? t.OriginStation.Name : null,
                     t.Destination,
-                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null
+                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null,
+                    t.DayOfWeek
                 })
                 .ToListAsync();
         }
@@ -49,7 +60,8 @@ namespace RailwayAPI.Controllers
                     t.Origin,
                     OriginName = t.OriginStation != null ? t.OriginStation.Name : null,
                     t.Destination,
-                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null
+                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null,
+                    t.DayOfWeek
                 })
                 .FirstOrDefaultAsync();
 
@@ -78,6 +90,12 @@ namespace RailwayAPI.Controllers
             if (train.Origin == train.Destination)
             {
                 return BadRequest("Origin and destination cannot be the same");
+            }
+
+            // Validate DayOfWeek
+            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !ValidDays.Contains(train.DayOfWeek))
+            {
+                return BadRequest($"DayOfWeek must be one of: {string.Join(", ", ValidDays)}");
             }
 
             // Verify stations exist
@@ -123,6 +141,12 @@ namespace RailwayAPI.Controllers
             if (train.Origin == train.Destination)
             {
                 return BadRequest("Origin and destination cannot be the same");
+            }
+
+            // Validate DayOfWeek
+            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !ValidDays.Contains(train.DayOfWeek))
+            {
+                return BadRequest($"DayOfWeek must be one of: {string.Join(", ", ValidDays)}");
             }
 
             _context.Entry(train).State = EntityState.Modified;

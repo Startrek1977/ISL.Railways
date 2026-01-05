@@ -26,6 +26,7 @@ function TrainList() {
 
   useEffect(() => {
     fetchStations();
+    fetchTrains();
   }, []);
 
   const fetchTrains = async (dayOfWeek = null) => {
@@ -70,7 +71,7 @@ function TrainList() {
   const handleClearFilter = () => {
     setSelectedDate('');
     setFilterActive(false);
-    setTrains([]);
+    fetchTrains();
     setError('');
   };
 
@@ -121,6 +122,8 @@ function TrainList() {
       if (filterActive && selectedDate) {
         const dayOfWeek = getDayOfWeekFromDate(selectedDate);
         fetchTrains(dayOfWeek);
+      } else {
+        fetchTrains();
       }
       setError('');
     } catch (err) {
@@ -173,6 +176,8 @@ function TrainList() {
       if (filterActive && selectedDate) {
         const dayOfWeek = getDayOfWeekFromDate(selectedDate);
         fetchTrains(dayOfWeek);
+      } else {
+        fetchTrains();
       }
       setError('');
     } catch (err) {
@@ -199,6 +204,8 @@ function TrainList() {
         if (filterActive && selectedDate) {
           const dayOfWeek = getDayOfWeekFromDate(selectedDate);
           fetchTrains(dayOfWeek);
+        } else {
+          fetchTrains();
         }
         setError('');
       } catch (err) {
@@ -335,7 +342,7 @@ function TrainList() {
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
                 <td colSpan="8" style={{ textAlign: 'center' }}>
-                  {filterActive ? 'No trains found for the selected date' : 'Please select a date and click Search to view trains'}
+                  {filterActive ? 'No trains found for the selected date' : 'No trains available'}
                 </td>
               </tr>
             ) : (

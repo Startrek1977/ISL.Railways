@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RailwayAPI.Data;
@@ -21,10 +22,10 @@ namespace RailwayAPI.Controllers
         /// <summary>
         /// Gets all trains, optionally filtered by date.
         /// </summary>
-        /// <param name="date">Optional date to filter trains by day of week (e.g., 2024-01-15 returns Monday trains).</param>
+        /// <param name="date">Optional date in dd/MM/yyyy format to filter trains by day of week (e.g., 15/01/2024 returns Monday trains).</param>
         /// <returns>List of trains with their origin and destination station details.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetTrains([FromQuery] DateTime? date = null)
+        public async Task<ActionResult<IEnumerable<object>>> GetTrains([FromQuery] string? date = null)
         {
             var query = _context.Trains
                 .Include(t => t.OriginStation)
@@ -32,9 +33,13 @@ namespace RailwayAPI.Controllers
                 .AsQueryable();
 
             // Filter by day of week derived from the selected date
-            if (date.HasValue)
+            if (!string.IsNullOrEmpty(date))
             {
-                var dayOfWeek = date.Value.DayOfWeek.ToString();
+                if (!DateTime.TryParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                {
+                    return BadRequest("Invalid date format. Use dd/MM/yyyy (e.g., 15/01/2024).");
+                }
+                var dayOfWeek = parsedDate.DayOfWeek.ToString();
                 query = query.Where(t => t.DayOfWeek == dayOfWeek);
             }
 

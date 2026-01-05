@@ -3,6 +3,8 @@ import axios from 'axios';
 import { API_URL } from '../config/api';
 import './TrainList.css';
 
+const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 function TrainList() {
   const [trains, setTrains] = useState([]);
   const [stations, setStations] = useState([]);
@@ -13,16 +15,20 @@ function TrainList() {
   const [addingNewTrain, setAddingNewTrain] = useState(false);
   const [newTrain, setNewTrain] = useState(null);
   const [selectedTrain, setSelectedTrain] = useState(null);
+  const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
     fetchTrains();
     fetchStations();
   }, []);
 
-  const fetchTrains = async () => {
+  const fetchTrains = async (date = null) => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/trains`);
+      const url = date
+        ? `${API_URL}/trains?date=${date}`
+        : `${API_URL}/trains`;
+      const response = await axios.get(url);
       setTrains(response.data);
       setError('');
     } catch (err) {
@@ -31,6 +37,15 @@ function TrainList() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = () => {
+    fetchTrains(filterDate || null);
+  };
+
+  const handleClearFilter = () => {
+    setFilterDate('');
+    fetchTrains(null);
   };
 
   const fetchStations = async () => {
@@ -50,11 +65,12 @@ function TrainList() {
 
   const handleAddNewTrain = () => {
     const nextNumber = getNextTrainNumber();
-    
+
     setNewTrain({
       number: nextNumber,
       origin: '',
-      destination: ''
+      destination: '',
+      dayOfWeek: 'Monday'
     });
     setAddingNewTrain(true);
     setError('');
@@ -75,7 +91,8 @@ function TrainList() {
       await axios.post(`${API_URL}/trains`, {
         number: newTrain.number,
         origin: parseInt(newTrain.origin),
-        destination: parseInt(newTrain.destination)
+        destination: parseInt(newTrain.destination),
+        dayOfWeek: newTrain.dayOfWeek
       });
       setAddingNewTrain(false);
       setNewTrain(null);
@@ -97,7 +114,8 @@ function TrainList() {
     setEditingTrain({
       number: train.number,
       origin: train.origin.toString(),
-      destination: train.destination.toString()
+      destination: train.destination.toString(),
+      dayOfWeek: train.dayOfWeek
     });
     setError('');
   };
@@ -117,7 +135,8 @@ function TrainList() {
       await axios.put(`${API_URL}/trains/${editingTrain.number}`, {
         number: editingTrain.number,
         origin: parseInt(editingTrain.origin),
-        destination: parseInt(editingTrain.destination)
+        destination: parseInt(editingTrain.destination),
+        dayOfWeek: editingTrain.dayOfWeek
       });
       setEditingTrainNumber(null);
       setEditingTrain(null);
@@ -164,6 +183,23 @@ function TrainList() {
       
       {error && <div className="error-message">{error}</div>}
 
+      <div className="filter-section">
+        <label htmlFor="filterDate">Filter by Date:</label>
+        <input
+          type="date"
+          id="filterDate"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+          className="date-picker"
+        />
+        <button onClick={handleSearch} className="btn-search">
+          Search
+        </button>
+        <button onClick={handleClearFilter} className="btn-clear" disabled={!filterDate}>
+          Clear
+        </button>
+      </div>
+
       <div className="table-actions">
         <button onClick={handleAddNewTrain} className="btn-add" disabled={addingNewTrain}>
           Add New Train
@@ -187,6 +223,7 @@ function TrainList() {
               <th>Origin Station Name</th>
               <th>Destination Station Number</th>
               <th>Destination Station Name</th>
+              <th>Day of Week</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -218,7 +255,7 @@ function TrainList() {
                 </td>
                 <td>{newTrain.destination || '-'}</td>
                 <td>
-                  <select 
+                  <select
                     value={newTrain.destination}
                     onChange={(e) => setNewTrain({ ...newTrain, destination: e.target.value })}
                     className="station-select"
@@ -232,6 +269,19 @@ function TrainList() {
                   </select>
                 </td>
                 <td>
+                  <select
+                    value={newTrain.dayOfWeek}
+                    onChange={(e) => setNewTrain({ ...newTrain, dayOfWeek: e.target.value })}
+                    className="day-select"
+                  >
+                    {DAYS_OF_WEEK.map(day => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
                   <button onClick={handleSaveNewTrain} className="btn-save">Save</button>
                   <button onClick={handleCancelNewTrain} className="btn-cancel">Cancel</button>
                 </td>
@@ -239,7 +289,7 @@ function TrainList() {
             )}
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center' }}>No trains found</td>
+                <td colSpan="8" style={{ textAlign: 'center' }}>No trains found</td>
               </tr>
             ) : (
               trains.map((train) => (
@@ -278,7 +328,7 @@ function TrainList() {
                   <td>{train.destination}</td>
                   <td>
                     {editingTrainNumber === train.number ? (
-                      <select 
+                      <select
                         value={editingTrain.destination}
                         onChange={(e) => setEditingTrain({ ...editingTrain, destination: e.target.value })}
                         className="station-select"
@@ -292,6 +342,23 @@ function TrainList() {
                       </select>
                     ) : (
                       train.destinationName || 'N/A'
+                    )}
+                  </td>
+                  <td>
+                    {editingTrainNumber === train.number ? (
+                      <select
+                        value={editingTrain.dayOfWeek}
+                        onChange={(e) => setEditingTrain({ ...editingTrain, dayOfWeek: e.target.value })}
+                        className="day-select"
+                      >
+                        {DAYS_OF_WEEK.map(day => (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      train.dayOfWeek
                     )}
                   </td>
                   <td>

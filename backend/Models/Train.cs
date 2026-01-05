@@ -18,6 +18,10 @@ namespace RailwayAPI.Models
         [Range(1000, 8000)]
         public int Destination { get; set; }
 
+        [Required]
+        [StringLength(10)]
+        public string DayOfWeek { get; set; } = "Monday";
+
         // Navigation properties
         [ForeignKey("Origin")]
         public Station? OriginStation { get; set; }

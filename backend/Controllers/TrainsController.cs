@@ -16,13 +16,26 @@ namespace RailwayAPI.Controllers
             _context = context;
         }
 
+        private static readonly string[] ValidDaysOfWeek = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+
         // GET: api/Trains
+        // Optional date parameter for filtering by day of week
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetTrains()
+        public async Task<ActionResult<IEnumerable<object>>> GetTrains([FromQuery] DateTime? date = null)
         {
-            return await _context.Trains
+            var query = _context.Trains
                 .Include(t => t.OriginStation)
                 .Include(t => t.DestinationStation)
+                .AsQueryable();
+
+            // Filter by day of week derived from the selected date
+            if (date.HasValue)
+            {
+                var dayOfWeek = date.Value.DayOfWeek.ToString();
+                query = query.Where(t => t.DayOfWeek == dayOfWeek);
+            }
+
+            return await query
                 .OrderBy(t => t.Number)
                 .Select(t => new
                 {
@@ -30,7 +43,8 @@ namespace RailwayAPI.Controllers
                     t.Origin,
                     OriginName = t.OriginStation != null ? t.OriginStation.Name : null,
                     t.Destination,
-                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null
+                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null,
+                    t.DayOfWeek
                 })
                 .ToListAsync();
         }
@@ -49,7 +63,8 @@ namespace RailwayAPI.Controllers
                     t.Origin,
                     OriginName = t.OriginStation != null ? t.OriginStation.Name : null,
                     t.Destination,
-                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null
+                    DestinationName = t.DestinationStation != null ? t.DestinationStation.Name : null,
+                    t.DayOfWeek
                 })
                 .FirstOrDefaultAsync();
 
@@ -78,6 +93,11 @@ namespace RailwayAPI.Controllers
             if (train.Origin == train.Destination)
             {
                 return BadRequest("Origin and destination cannot be the same");
+            }
+
+            if (string.IsNullOrEmpty(train.DayOfWeek) || !ValidDaysOfWeek.Contains(train.DayOfWeek))
+            {
+                return BadRequest("DayOfWeek must be a valid day (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)");
             }
 
             // Verify stations exist
@@ -123,6 +143,11 @@ namespace RailwayAPI.Controllers
             if (train.Origin == train.Destination)
             {
                 return BadRequest("Origin and destination cannot be the same");
+            }
+
+            if (string.IsNullOrEmpty(train.DayOfWeek) || !ValidDaysOfWeek.Contains(train.DayOfWeek))
+            {
+                return BadRequest("DayOfWeek must be a valid day (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)");
             }
 
             _context.Entry(train).State = EntityState.Modified;

@@ -36,9 +36,11 @@ CREATE TABLE Train (
     Number INT PRIMARY KEY CHECK (Number >= 10 AND Number <= 100),
     Origin INT NOT NULL CHECK (Origin >= 1000 AND Origin <= 8000),
     Destination INT NOT NULL CHECK (Destination >= 1000 AND Destination <= 8000),
+    DayOfWeek NVARCHAR(10) NOT NULL DEFAULT 'Monday',
     CONSTRAINT FK_Train_Origin FOREIGN KEY (Origin) REFERENCES Station(Number) ON DELETE NO ACTION,
     CONSTRAINT FK_Train_Destination FOREIGN KEY (Destination) REFERENCES Station(Number) ON DELETE NO ACTION,
-    CONSTRAINT CHK_Train_Different_Stations CHECK (Origin <> Destination)
+    CONSTRAINT CHK_Train_Different_Stations CHECK (Origin <> Destination),
+    CONSTRAINT CHK_Train_DayOfWeek CHECK (DayOfWeek IN ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'))
 );
 PRINT 'Train table created';
 GO
@@ -56,14 +58,14 @@ INSERT INTO Station (Number, Name) VALUES
 PRINT 'Israeli railway stations inserted successfully';
 GO
 
--- Insert Sample Trains
-INSERT INTO Train (Number, Origin, Destination) VALUES
-    (10, 1000, 3000),  -- Tel Aviv Savidor to Haifa Hof HaCarmel
-    (20, 3000, 1000),  -- Haifa Hof HaCarmel to Tel Aviv Savidor
-    (30, 1000, 4000),  -- Tel Aviv Savidor to Beer Sheva Center
-    (40, 2000, 5000),  -- Tel Aviv HaShalom to Nahariya
-    (50, 6000, 7000),  -- Benyamina to Herzliya
-    (60, 7000, 2000);  -- Herzliya to Tel Aviv HaShalom
+-- Insert Sample Trains with random days of week
+INSERT INTO Train (Number, Origin, Destination, DayOfWeek) VALUES
+    (10, 1000, 3000, 'Sunday'),     -- Tel Aviv Savidor to Haifa Hof HaCarmel
+    (20, 3000, 1000, 'Monday'),     -- Haifa Hof HaCarmel to Tel Aviv Savidor
+    (30, 1000, 4000, 'Tuesday'),    -- Tel Aviv Savidor to Beer Sheva Center
+    (40, 2000, 5000, 'Wednesday'),  -- Tel Aviv HaShalom to Nahariya
+    (50, 6000, 7000, 'Thursday'),   -- Benyamina to Herzliya
+    (60, 7000, 2000, 'Friday');     -- Herzliya to Tel Aviv HaShalom
 
 PRINT 'Sample trains inserted successfully';
 GO

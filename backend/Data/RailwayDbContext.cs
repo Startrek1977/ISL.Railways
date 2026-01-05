@@ -30,6 +30,8 @@ namespace RailwayAPI.Data
                 entity.ToTable("Train");
                 entity.HasKey(t => t.Number);
 
+                entity.Property(t => t.DayOfWeek).IsRequired().HasMaxLength(10);
+
                 entity.HasOne(t => t.OriginStation)
                     .WithMany(s => s.OriginTrains)
                     .HasForeignKey(t => t.Origin)

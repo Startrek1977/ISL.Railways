@@ -22,11 +22,18 @@ function TrainList() {
     fetchStations();
   }, []);
 
+  const formatDateForApi = (dateString) => {
+    if (!dateString) return null;
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   const fetchTrains = async (date = null) => {
     try {
       setLoading(true);
-      const url = date
-        ? `${API_URL}/trains?date=${date}`
+      const formattedDate = formatDateForApi(date);
+      const url = formattedDate
+        ? `${API_URL}/trains?date=${formattedDate}`
         : `${API_URL}/trains`;
       const response = await axios.get(url);
       setTrains(response.data);

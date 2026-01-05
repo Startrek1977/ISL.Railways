@@ -18,6 +18,12 @@ function TrainList() {
 
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  // Helper function to get day of week from a date string
+  const getDayOfWeekFromDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', { weekday: 'long' });
+  };
+
   useEffect(() => {
     fetchTrains();
     fetchStations();
@@ -56,8 +62,7 @@ function TrainList() {
       return;
     }
 
-    const date = new Date(selectedDate);
-    const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+    const dayOfWeek = getDayOfWeekFromDate(selectedDate);
     fetchTrains(dayOfWeek);
     setFilterActive(true);
     setError('');
@@ -115,8 +120,7 @@ function TrainList() {
       setAddingNewTrain(false);
       setNewTrain(null);
       if (filterActive && selectedDate) {
-        const date = new Date(selectedDate);
-        const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+        const dayOfWeek = getDayOfWeekFromDate(selectedDate);
         fetchTrains(dayOfWeek);
       } else {
         fetchTrains();
@@ -170,8 +174,7 @@ function TrainList() {
       setEditingTrainNumber(null);
       setEditingTrain(null);
       if (filterActive && selectedDate) {
-        const date = new Date(selectedDate);
-        const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+        const dayOfWeek = getDayOfWeekFromDate(selectedDate);
         fetchTrains(dayOfWeek);
       } else {
         fetchTrains();
@@ -199,8 +202,7 @@ function TrainList() {
         await axios.delete(`${API_URL}/trains/${selectedTrain}`);
         setSelectedTrain(null);
         if (filterActive && selectedDate) {
-          const date = new Date(selectedDate);
-          const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+          const dayOfWeek = getDayOfWeekFromDate(selectedDate);
           fetchTrains(dayOfWeek);
         } else {
           fetchTrains();

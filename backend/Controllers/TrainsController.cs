@@ -10,6 +10,7 @@ namespace RailwayAPI.Controllers
     public class TrainsController : ControllerBase
     {
         private readonly RailwayDbContext _context;
+        private static readonly string[] ValidDays = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
         public TrainsController(RailwayDbContext context)
         {
@@ -92,10 +93,9 @@ namespace RailwayAPI.Controllers
             }
 
             // Validate DayOfWeek
-            var validDays = new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !validDays.Contains(train.DayOfWeek))
+            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !ValidDays.Contains(train.DayOfWeek))
             {
-                return BadRequest("DayOfWeek must be one of: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday");
+                return BadRequest($"DayOfWeek must be one of: {string.Join(", ", ValidDays)}");
             }
 
             // Verify stations exist
@@ -144,10 +144,9 @@ namespace RailwayAPI.Controllers
             }
 
             // Validate DayOfWeek
-            var validDays = new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !validDays.Contains(train.DayOfWeek))
+            if (string.IsNullOrWhiteSpace(train.DayOfWeek) || !ValidDays.Contains(train.DayOfWeek))
             {
-                return BadRequest("DayOfWeek must be one of: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday");
+                return BadRequest($"DayOfWeek must be one of: {string.Join(", ", ValidDays)}");
             }
 
             _context.Entry(train).State = EntityState.Modified;

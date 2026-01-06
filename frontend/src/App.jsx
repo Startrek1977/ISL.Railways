@@ -9,8 +9,10 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🚂 ISL Railways</h1>
-        <p>Israeli Railway Train Schedule</p>
+        <div className="header-content">
+          <img src="/israel-railways-logo.svg" alt="Israel Railways" className="header-logo" />
+          <p>Israeli Railway Train Schedule</p>
+        </div>
       </header>
 
       <nav className="app-nav">

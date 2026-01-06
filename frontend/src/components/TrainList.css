@@ -32,12 +32,40 @@
   font-size: 14px;
   background-color: white;
   cursor: pointer;
+  width: 150px;
 }
 
 .date-picker:focus {
   outline: none;
   border-color: #3498db;
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.react-datepicker-wrapper {
+  display: inline-block;
+}
+
+.react-datepicker__close-icon {
+  right: 5px;
+}
+
+.react-datepicker__close-icon::after {
+  background-color: #95a5a6;
+}
+
+.react-datepicker__close-icon:hover::after {
+  background-color: #7f8c8d;
+}
+
+[dir="rtl"] .react-datepicker__close-icon {
+  right: auto;
+  left: 5px;
+}
+
+[dir="rtl"] .date-picker {
+  padding-right: 15px;
+  padding-left: 30px;
+  text-align: right;
 }
 
 .btn-search {
@@ -146,6 +174,10 @@
   font-weight: 600;
 }
 
+[dir="rtl"] .trains-table th {
+  text-align: right;
+}
+
 .trains-table td {
   padding: 15px;
   border-bottom: 1px solid #ddd;
@@ -221,6 +253,22 @@
   margin-bottom: 20px;
   border-left: 4px solid #c00;
   text-align: center;
+}
+
+[dir="rtl"] .error-message {
+  border-left: none;
+  border-right: 4px solid #c00;
+}
+
+[dir="rtl"] .table-actions {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .btn-edit,
+[dir="rtl"] .btn-save,
+[dir="rtl"] .btn-cancel {
+  margin-right: 0;
+  margin-left: 5px;
 }
 
 .loading {

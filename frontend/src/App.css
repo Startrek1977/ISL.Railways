@@ -21,6 +21,74 @@ body {
   padding: 0 20px;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.language-switcher {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.lang-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.flag-icon {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.lang-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background-color: #2c3e50;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.lang-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.lang-option.active {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .header-content {

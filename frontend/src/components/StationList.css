@@ -17,6 +17,11 @@
   border-left: 4px solid #0056b3;
 }
 
+[dir="rtl"] .info-message {
+  border-left: none;
+  border-right: 4px solid #0056b3;
+}
+
 .info-message p {
   margin: 5px 0;
 }
@@ -44,6 +49,10 @@
   font-weight: 600;
 }
 
+[dir="rtl"] .stations-table th {
+  text-align: right;
+}
+
 .stations-table td {
   padding: 15px;
   border-bottom: 1px solid #ddd;
@@ -60,6 +69,11 @@
   border-radius: 5px;
   margin-bottom: 20px;
   border-left: 4px solid #c00;
+}
+
+[dir="rtl"] .error-message {
+  border-left: none;
+  border-right: 4px solid #c00;
 }
 
 .loading {

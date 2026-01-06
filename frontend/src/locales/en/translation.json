@@ -1,0 +1,72 @@
+{
+  "app": {
+    "title": "Israeli Railway Train Schedule",
+    "footer": "ISL Railways. Built with React + .NET Core + MSSQL",
+    "logoAlt": "Israel Railways"
+  },
+  "nav": {
+    "trains": "Trains",
+    "stations": "Stations"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "search": "Search",
+    "clear": "Clear"
+  },
+  "trains": {
+    "title": "Train Schedule",
+    "loading": "Loading trains...",
+    "addNew": "Add New Train",
+    "delete": "Delete Train",
+    "filterByDate": "Filter by Date:",
+    "selectDate": "Select date",
+    "noTrains": "No trains found",
+    "headers": {
+      "trainNumber": "Train Number",
+      "originNumber": "Origin Station Number",
+      "originName": "Origin Station Name",
+      "destinationNumber": "Destination Station Number",
+      "destinationName": "Destination Station Name",
+      "dayOfWeek": "Day of Week",
+      "actions": "Actions"
+    },
+    "selectOrigin": "Select Origin",
+    "selectDestination": "Select Destination",
+    "errors": {
+      "loadFailed": "Failed to load trains. Make sure the API is running.",
+      "addFailed": "Failed to add train",
+      "updateFailed": "Failed to update train",
+      "deleteFailed": "Failed to delete train",
+      "selectBothStations": "Please select both origin and destination stations",
+      "differentStations": "Origin and destination must be different",
+      "selectToDelete": "Please select a train to delete"
+    },
+    "confirmDelete": "Are you sure you want to delete train {{number}}?"
+  },
+  "stations": {
+    "title": "Stations",
+    "loading": "Loading stations...",
+    "noStations": "No stations found.",
+    "infoLine1": "Stations are pre-configured and cannot be modified at runtime.",
+    "infoLine2": "These represent the Israeli railway network stations.",
+    "headers": {
+      "number": "Number",
+      "name": "Name"
+    },
+    "errors": {
+      "loadFailed": "Failed to load stations. Make sure the API is running."
+    }
+  },
+  "days": {
+    "Sunday": "Sunday",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday"
+  }
+}

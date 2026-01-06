@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import './StationList.css';
 
-/**
- * Read-only StationList component.
- * Stations are seeded at database initialization and cannot be modified at runtime.
- * To change stations, update the seed data in the backend and recreate the database.
- */
 function StationList() {
+  const { t } = useTranslation();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,38 +21,38 @@ function StationList() {
       setStations(response.data);
       setError('');
     } catch (err) {
-      setError('Failed to load stations. Make sure the API is running.');
+      setError(t('stations.errors.loadFailed'));
       console.error('Error fetching stations:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="loading">Loading stations...</div>;
+  if (loading) return <div className="loading">{t('stations.loading')}</div>;
 
   return (
     <div className="station-list">
-      <h2>🚉 Stations</h2>
-      
+      <h2>{t('stations.title')}</h2>
+
       {error && <div className="error-message">{error}</div>}
 
       <div className="info-message">
-        <p>ℹ️ Stations are pre-configured and cannot be modified at runtime.</p>
-        <p>These represent the Israeli railway network stations.</p>
+        <p>{t('stations.infoLine1')}</p>
+        <p>{t('stations.infoLine2')}</p>
       </div>
 
       <div className="stations-table-container">
         <table className="stations-table">
           <thead>
             <tr>
-              <th>Number</th>
-              <th>Name</th>
+              <th>{t('stations.headers.number')}</th>
+              <th>{t('stations.headers.name')}</th>
             </tr>
           </thead>
           <tbody>
             {stations.length === 0 ? (
               <tr>
-                <td colSpan="2" style={{ textAlign: 'center' }}>No stations found.</td>
+                <td colSpan="2" style={{ textAlign: 'center' }}>{t('stations.noStations')}</td>
               </tr>
             ) : (
               stations.map((station) => (

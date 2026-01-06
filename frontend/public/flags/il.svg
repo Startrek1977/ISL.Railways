@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 480">
+  <rect width="660" height="480" fill="#fff"/>
+  <rect y="54" width="660" height="75" fill="#0038b8"/>
+  <rect y="351" width="660" height="75" fill="#0038b8"/>
+  <g transform="translate(330,240)" fill="none" stroke="#0038b8" stroke-width="11">
+    <!-- Upper triangle pointing up -->
+    <path d="M 0,-90 L 78,45 L -78,45 Z"/>
+    <!-- Lower triangle pointing down -->
+    <path d="M 0,90 L 78,-45 L -78,-45 Z"/>
+  </g>
+</svg>

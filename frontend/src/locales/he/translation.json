@@ -1,0 +1,72 @@
+{
+  "app": {
+    "title": "לוח זמני רכבות ישראל",
+    "footer": "רכבת ישראל. נבנה עם React + .NET Core + MSSQL",
+    "logoAlt": "רכבת ישראל"
+  },
+  "nav": {
+    "trains": "רכבות",
+    "stations": "תחנות"
+  },
+  "common": {
+    "loading": "טוען...",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "edit": "עריכה",
+    "search": "חיפוש",
+    "clear": "נקה"
+  },
+  "trains": {
+    "title": "לוח זמנים",
+    "loading": "טוען רכבות...",
+    "addNew": "הוסף רכבת חדשה",
+    "delete": "מחק רכבת",
+    "filterByDate": "סינון לפי תאריך:",
+    "selectDate": "בחר תאריך",
+    "noTrains": "לא נמצאו רכבות",
+    "headers": {
+      "trainNumber": "רכבת",
+      "originNumber": "מוצא",
+      "originName": "תיאור מוצא",
+      "destinationNumber": "יעד",
+      "destinationName": "תיאור יעד",
+      "dayOfWeek": "יום",
+      "actions": ""
+    },
+    "selectOrigin": "בחר תחנת מוצא",
+    "selectDestination": "בחר תחנת יעד",
+    "errors": {
+      "loadFailed": "טעינת הרכבות נכשלה. ודא שהשרת פועל.",
+      "addFailed": "הוספת הרכבת נכשלה",
+      "updateFailed": "עדכון הרכבת נכשל",
+      "deleteFailed": "מחיקת הרכבת נכשלה",
+      "selectBothStations": "יש לבחור תחנת מוצא ותחנת יעד",
+      "differentStations": "תחנת המוצא ותחנת היעד חייבות להיות שונות",
+      "selectToDelete": "יש לבחור רכבת למחיקה"
+    },
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק את רכבת {{number}}?"
+  },
+  "stations": {
+    "title": "תחנות",
+    "loading": "טוען תחנות...",
+    "noStations": "לא נמצאו תחנות.",
+    "infoLine1": "התחנות מוגדרות מראש ולא ניתן לשנותן בזמן ריצה.",
+    "infoLine2": "אלו מייצגות את תחנות רשת הרכבת הישראלית.",
+    "headers": {
+      "number": "מספר",
+      "name": "שם"
+    },
+    "errors": {
+      "loadFailed": "טעינת התחנות נכשלה. ודא שהשרת פועל."
+    }
+  },
+  "days": {
+    "Sunday": "ראשון",
+    "Monday": "שני",
+    "Tuesday": "שלישי",
+    "Wednesday": "רביעי",
+    "Thursday": "חמישי",
+    "Friday": "שישי",
+    "Saturday": "שבת"
+  }
+}

@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { he, enUS, ru, uk } from 'date-fns/locale';
 import { API_URL } from '../config/api';
+import 'react-datepicker/dist/react-datepicker.css';
 import './TrainList.css';
+
+registerLocale('he', he);
+registerLocale('en', enUS);
+registerLocale('ru', ru);
+registerLocale('uk', uk);
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function TrainList() {
+  const { t, i18n } = useTranslation();
   const [trains, setTrains] = useState([]);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,16 +25,18 @@ function TrainList() {
   const [addingNewTrain, setAddingNewTrain] = useState(false);
   const [newTrain, setNewTrain] = useState(null);
   const [selectedTrain, setSelectedTrain] = useState(null);
-  const [filterDate, setFilterDate] = useState('');
+  const [filterDate, setFilterDate] = useState(null);
 
   useEffect(() => {
     fetchTrains();
     fetchStations();
   }, []);
 
-  const formatDateForApi = (dateString) => {
-    if (!dateString) return null;
-    const [year, month, day] = dateString.split('-');
+  const formatDateForApi = (date) => {
+    if (!date) return null;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
 
@@ -39,7 +51,7 @@ function TrainList() {
       setTrains(response.data);
       setError('');
     } catch (err) {
-      setError('Failed to load trains. Make sure the API is running.');
+      setError(t('trains.errors.loadFailed'));
       console.error('Error fetching trains:', err);
     } finally {
       setLoading(false);
@@ -47,11 +59,11 @@ function TrainList() {
   };
 
   const handleSearch = () => {
-    fetchTrains(filterDate || null);
+    fetchTrains(filterDate);
   };
 
   const handleClearFilter = () => {
-    setFilterDate('');
+    setFilterDate(null);
     fetchTrains(null);
   };
 
@@ -85,12 +97,12 @@ function TrainList() {
 
   const handleSaveNewTrain = async () => {
     if (!newTrain.origin || !newTrain.destination) {
-      setError('Please select both origin and destination stations');
+      setError(t('trains.errors.selectBothStations'));
       return;
     }
 
     if (newTrain.origin === newTrain.destination) {
-      setError('Origin and destination must be different');
+      setError(t('trains.errors.differentStations'));
       return;
     }
 
@@ -106,7 +118,7 @@ function TrainList() {
       fetchTrains();
       setError('');
     } catch (err) {
-      setError(err.response?.data || 'Failed to add train');
+      setError(err.response?.data || t('trains.errors.addFailed'));
     }
   };
 
@@ -129,12 +141,12 @@ function TrainList() {
 
   const handleSaveEditTrain = async () => {
     if (!editingTrain.origin || !editingTrain.destination) {
-      setError('Please select both origin and destination stations');
+      setError(t('trains.errors.selectBothStations'));
       return;
     }
 
     if (editingTrain.origin === editingTrain.destination) {
-      setError('Origin and destination must be different');
+      setError(t('trains.errors.differentStations'));
       return;
     }
 
@@ -150,7 +162,7 @@ function TrainList() {
       fetchTrains();
       setError('');
     } catch (err) {
-      setError(err.response?.data || 'Failed to update train');
+      setError(err.response?.data || t('trains.errors.updateFailed'));
     }
   };
 
@@ -162,18 +174,18 @@ function TrainList() {
 
   const handleDeleteTrain = async () => {
     if (!selectedTrain) {
-      setError('Please select a train to delete');
+      setError(t('trains.errors.selectToDelete'));
       return;
     }
 
-    if (window.confirm(`Are you sure you want to delete train ${selectedTrain}?`)) {
+    if (window.confirm(t('trains.confirmDelete', { number: selectedTrain }))) {
       try {
         await axios.delete(`${API_URL}/trains/${selectedTrain}`);
         setSelectedTrain(null);
         fetchTrains();
         setError('');
       } catch (err) {
-        setError(err.response?.data || 'Failed to delete train');
+        setError(err.response?.data || t('trains.errors.deleteFailed'));
       }
     }
   };
@@ -182,41 +194,43 @@ function TrainList() {
     setSelectedTrain(trainNumber === selectedTrain ? null : trainNumber);
   };
 
-  if (loading) return <div className="loading">Loading trains...</div>;
+  if (loading) return <div className="loading">{t('trains.loading')}</div>;
 
   return (
     <div className="train-list">
-      <h2>Train Schedule</h2>
-      
+      <h2>{t('trains.title')}</h2>
+
       {error && <div className="error-message">{error}</div>}
 
       <div className="filter-section">
-        <label htmlFor="filterDate">Filter by Date:</label>
-        <input
-          type="date"
-          id="filterDate"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
+        <label>{t('trains.filterByDate')}</label>
+        <DatePicker
+          selected={filterDate}
+          onChange={(date) => setFilterDate(date)}
+          locale={i18n.language}
+          dateFormat="dd/MM/yyyy"
           className="date-picker"
+          placeholderText={t('trains.selectDate')}
+          isClearable
         />
         <button onClick={handleSearch} className="btn-search">
-          Search
+          {t('common.search')}
         </button>
         <button onClick={handleClearFilter} className="btn-clear" disabled={!filterDate}>
-          Clear
+          {t('common.clear')}
         </button>
       </div>
 
       <div className="table-actions">
         <button onClick={handleAddNewTrain} className="btn-add" disabled={addingNewTrain}>
-          Add New Train
+          {t('trains.addNew')}
         </button>
-        <button 
-          onClick={handleDeleteTrain} 
+        <button
+          onClick={handleDeleteTrain}
           className="btn-delete-selected"
           disabled={!selectedTrain}
         >
-          Delete Train
+          {t('trains.delete')}
         </button>
       </div>
 
@@ -225,34 +239,34 @@ function TrainList() {
           <thead>
             <tr>
               <th style={{ width: '40px' }}></th>
-              <th>Train Number</th>
-              <th>Origin Station Number</th>
-              <th>Origin Station Name</th>
-              <th>Destination Station Number</th>
-              <th>Destination Station Name</th>
-              <th>Day of Week</th>
-              <th>Actions</th>
+              <th>{t('trains.headers.trainNumber')}</th>
+              <th>{t('trains.headers.originNumber')}</th>
+              <th>{t('trains.headers.originName')}</th>
+              <th>{t('trains.headers.destinationNumber')}</th>
+              <th>{t('trains.headers.destinationName')}</th>
+              <th>{t('trains.headers.dayOfWeek')}</th>
+              <th>{t('trains.headers.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {addingNewTrain && newTrain && (
               <tr className="editing-row">
                 <td>
-                  <input 
-                    type="radio" 
-                    name="trainSelect" 
-                    disabled 
+                  <input
+                    type="radio"
+                    name="trainSelect"
+                    disabled
                   />
                 </td>
                 <td>{newTrain.number}</td>
                 <td>{newTrain.origin || '-'}</td>
                 <td>
-                  <select 
+                  <select
                     value={newTrain.origin}
                     onChange={(e) => setNewTrain({ ...newTrain, origin: e.target.value })}
                     className="station-select"
                   >
-                    <option value="">Select Origin</option>
+                    <option value="">{t('trains.selectOrigin')}</option>
                     {stations.map(station => (
                       <option key={station.number} value={station.number}>
                         {station.name}
@@ -267,7 +281,7 @@ function TrainList() {
                     onChange={(e) => setNewTrain({ ...newTrain, destination: e.target.value })}
                     className="station-select"
                   >
-                    <option value="">Select Destination</option>
+                    <option value="">{t('trains.selectDestination')}</option>
                     {stations.map(station => (
                       <option key={station.number} value={station.number}>
                         {station.name}
@@ -283,31 +297,31 @@ function TrainList() {
                   >
                     {DAYS_OF_WEEK.map(day => (
                       <option key={day} value={day}>
-                        {day}
+                        {t(`days.${day}`)}
                       </option>
                     ))}
                   </select>
                 </td>
                 <td>
-                  <button onClick={handleSaveNewTrain} className="btn-save">Save</button>
-                  <button onClick={handleCancelNewTrain} className="btn-cancel">Cancel</button>
+                  <button onClick={handleSaveNewTrain} className="btn-save">{t('common.save')}</button>
+                  <button onClick={handleCancelNewTrain} className="btn-cancel">{t('common.cancel')}</button>
                 </td>
               </tr>
             )}
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center' }}>No trains found</td>
+                <td colSpan="8" style={{ textAlign: 'center' }}>{t('trains.noTrains')}</td>
               </tr>
             ) : (
               trains.map((train) => (
-                <tr 
+                <tr
                   key={train.number}
                   className={selectedTrain === train.number ? 'selected-row' : ''}
                 >
                   <td>
-                    <input 
-                      type="radio" 
-                      name="trainSelect" 
+                    <input
+                      type="radio"
+                      name="trainSelect"
                       checked={selectedTrain === train.number}
                       onChange={() => handleRowSelect(train.number)}
                     />
@@ -316,12 +330,12 @@ function TrainList() {
                   <td>{train.origin}</td>
                   <td>
                     {editingTrainNumber === train.number ? (
-                      <select 
+                      <select
                         value={editingTrain.origin}
                         onChange={(e) => setEditingTrain({ ...editingTrain, origin: e.target.value })}
                         className="station-select"
                       >
-                        <option value="">Select Origin</option>
+                        <option value="">{t('trains.selectOrigin')}</option>
                         {stations.map(station => (
                           <option key={station.number} value={station.number}>
                             {station.name}
@@ -340,7 +354,7 @@ function TrainList() {
                         onChange={(e) => setEditingTrain({ ...editingTrain, destination: e.target.value })}
                         className="station-select"
                       >
-                        <option value="">Select Destination</option>
+                        <option value="">{t('trains.selectDestination')}</option>
                         {stations.map(station => (
                           <option key={station.number} value={station.number}>
                             {station.name}
@@ -360,22 +374,22 @@ function TrainList() {
                       >
                         {DAYS_OF_WEEK.map(day => (
                           <option key={day} value={day}>
-                            {day}
+                            {t(`days.${day}`)}
                           </option>
                         ))}
                       </select>
                     ) : (
-                      train.dayOfWeek
+                      t(`days.${train.dayOfWeek}`)
                     )}
                   </td>
                   <td>
                     {editingTrainNumber === train.number ? (
                       <>
-                        <button onClick={handleSaveEditTrain} className="btn-save">Save</button>
-                        <button onClick={handleCancelEdit} className="btn-cancel">Cancel</button>
+                        <button onClick={handleSaveEditTrain} className="btn-save">{t('common.save')}</button>
+                        <button onClick={handleCancelEdit} className="btn-cancel">{t('common.cancel')}</button>
                       </>
                     ) : (
-                      <button onClick={() => handleEditTrain(train)} className="btn-edit">Edit</button>
+                      <button onClick={() => handleEditTrain(train)} className="btn-edit">{t('common.edit')}</button>
                     )}
                   </td>
                 </tr>

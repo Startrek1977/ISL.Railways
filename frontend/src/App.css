@@ -40,10 +40,10 @@ body {
 }
 
 .app-header p {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   opacity: 0.9;
   text-align: center;
-  margin: 0;
+  margin: 0 0 10px 0;
 }
 
 .app-nav {

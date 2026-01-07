@@ -25,13 +25,13 @@
     "selectDate": "Select date",
     "noTrains": "No trains found",
     "headers": {
-      "trainNumber": "Train Number",
-      "originNumber": "Origin Station Number",
-      "originName": "Origin Station Name",
-      "destinationNumber": "Destination Station Number",
-      "destinationName": "Destination Station Name",
-      "dayOfWeek": "Day of Week",
-      "actions": "Actions"
+      "trainNumber": "Train",
+      "originNumber": "Origin",
+      "originName": "Origin Description",
+      "destinationNumber": "Destination",
+      "destinationName": "Destination Description",
+      "dayOfWeek": "Day",
+      "actions": ""
     },
     "selectOrigin": "Select Origin",
     "selectDestination": "Select Destination",

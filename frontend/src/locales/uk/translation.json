@@ -25,13 +25,13 @@
     "selectDate": "Оберіть дату",
     "noTrains": "Поїзди не знайдені",
     "headers": {
-      "trainNumber": "Номер поїзда",
-      "originNumber": "Номер станції відправлення",
-      "originName": "Назва станції відправлення",
-      "destinationNumber": "Номер станції призначення",
-      "destinationName": "Назва станції призначення",
-      "dayOfWeek": "День тижня",
-      "actions": "Дії"
+      "trainNumber": "Поїзд",
+      "originNumber": "Відправлення",
+      "originName": "Опис відправлення",
+      "destinationNumber": "Призначення",
+      "destinationName": "Опис призначення",
+      "dayOfWeek": "День",
+      "actions": ""
     },
     "selectOrigin": "Оберіть станцію відправлення",
     "selectDestination": "Оберіть станцію призначення",

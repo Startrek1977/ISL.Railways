@@ -245,6 +245,12 @@
   background-color: #bbdefb;
 }
 
+/* Disabled row styles - when another row is being edited */
+.trains-table tbody tr.disabled-row {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* Editing row - prominent visual indication */
 .trains-table tbody tr.editing-row {
   background-color: #fff3e0;

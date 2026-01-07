@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -32,6 +32,34 @@ function TrainList() {
     fetchTrains();
     fetchStations();
   }, []);
+
+  // Handle Escape key to cancel editing
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'Escape') {
+      if (editingTrainNumber !== null) {
+        setEditingTrainNumber(null);
+        setEditingTrain(null);
+        setError('');
+      } else if (addingNewTrain) {
+        setAddingNewTrain(false);
+        setNewTrain(null);
+        setError('');
+      }
+      // Remove focus from any active element
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+    }
+  }, [editingTrainNumber, addingNewTrain]);
+
+  useEffect(() => {
+    if (editingTrainNumber !== null || addingNewTrain) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [editingTrainNumber, addingNewTrain, handleKeyDown]);
 
   const formatDateForApi = (date) => {
     if (!date) return null;
@@ -137,6 +165,8 @@ function TrainList() {
       destination: train.destination.toString(),
       dayOfWeek: train.dayOfWeek
     });
+    // Automatically select the row being edited
+    setSelectedTrain(train.number);
     setError('');
   };
 
@@ -375,8 +405,8 @@ function TrainList() {
               trains.map((train) => (
                 <tr
                   key={train.number}
-                  className={`${selectedTrain === train.number ? 'selected-row' : ''} ${editingTrainNumber === train.number ? 'editing-row' : ''} ${editingTrainNumber !== train.number ? 'clickable-row' : ''}`}
-                  onClick={() => editingTrainNumber !== train.number && handleRowSelect(train.number)}
+                  className={`${selectedTrain === train.number ? 'selected-row' : ''} ${editingTrainNumber === train.number ? 'editing-row' : ''} ${editingTrainNumber === null && !addingNewTrain ? 'clickable-row' : ''} ${(editingTrainNumber !== null || addingNewTrain) && editingTrainNumber !== train.number ? 'disabled-row' : ''}`}
+                  onClick={() => editingTrainNumber === null && !addingNewTrain && handleRowSelect(train.number)}
                 >
                   <td className="col-train-number">{train.number}</td>
                   <td className="col-station-number">{train.origin}</td>

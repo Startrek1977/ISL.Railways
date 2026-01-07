@@ -281,29 +281,21 @@ function TrainList() {
         <table className="trains-table">
           <thead>
             <tr>
-              <th style={{ width: '40px' }}></th>
-              <th>{t('trains.headers.trainNumber')}</th>
-              <th>{t('trains.headers.originNumber')}</th>
-              <th>{t('trains.headers.originName')}</th>
-              <th>{t('trains.headers.destinationNumber')}</th>
-              <th>{t('trains.headers.destinationName')}</th>
-              <th>{t('trains.headers.dayOfWeek')}</th>
-              <th>{t('trains.headers.actions')}</th>
+              <th className="col-train-number">{t('trains.headers.trainNumber')}</th>
+              <th className="col-station-number">{t('trains.headers.originNumber')}</th>
+              <th className="col-station-name">{t('trains.headers.originName')}</th>
+              <th className="col-station-number">{t('trains.headers.destinationNumber')}</th>
+              <th className="col-station-name">{t('trains.headers.destinationName')}</th>
+              <th className="col-day">{t('trains.headers.dayOfWeek')}</th>
+              <th className="col-actions">{t('trains.headers.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {addingNewTrain && newTrain && (
               <tr className="editing-row">
-                <td>
-                  <input
-                    type="radio"
-                    name="trainSelect"
-                    disabled
-                  />
-                </td>
-                <td>{newTrain.number}</td>
-                <td>{newTrain.origin || '-'}</td>
-                <td>
+                <td className="col-train-number">{newTrain.number}</td>
+                <td className="col-station-number">{newTrain.origin || '-'}</td>
+                <td className="col-station-name">
                   <select
                     value={newTrain.origin}
                     onChange={(e) => setNewTrain({ ...newTrain, origin: e.target.value })}
@@ -317,8 +309,8 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>{newTrain.destination || '-'}</td>
-                <td>
+                <td className="col-station-number">{newTrain.destination || '-'}</td>
+                <td className="col-station-name">
                   <select
                     value={newTrain.destination}
                     onChange={(e) => setNewTrain({ ...newTrain, destination: e.target.value })}
@@ -332,7 +324,7 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td className="col-day">
                   <select
                     value={newTrain.dayOfWeek}
                     onChange={(e) => setNewTrain({ ...newTrain, dayOfWeek: e.target.value })}
@@ -345,62 +337,56 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>
-                  <button onClick={handleSaveNewTrain} className="btn-save">
-                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                <td className="col-actions">
+                  <button onClick={handleSaveNewTrain} className="btn-icon-save" title={t('common.save')}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="saveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffffff" />
-                          <stop offset="100%" stopColor="#c8e6c9" />
+                          <stop offset="0%" stopColor="#81c784" />
+                          <stop offset="50%" stopColor="#4caf50" />
+                          <stop offset="100%" stopColor="#388e3c" />
                         </linearGradient>
                       </defs>
-                      <circle cx="12" cy="12" r="9" fill="url(#saveGrad1)" opacity="0.3"/>
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad1)"/>
+                      <circle cx="12" cy="12" r="10" fill="url(#saveGrad1)" stroke="#2e7d32" strokeWidth="1"/>
+                      <path d="M9 16.17L5.53 12.7l-1.06 1.06L9 18.29l10.53-10.53-1.06-1.06z" fill="white"/>
                     </svg>
-                    {t('common.save')}
                   </button>
-                  <button onClick={handleCancelNewTrain} className="btn-cancel">
-                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                  <button onClick={handleCancelNewTrain} className="btn-icon-cancel" title={t('common.cancel')}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="cancelGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffffff" />
-                          <stop offset="100%" stopColor="#e0e0e0" />
+                          <stop offset="0%" stopColor="#bdbdbd" />
+                          <stop offset="50%" stopColor="#9e9e9e" />
+                          <stop offset="100%" stopColor="#757575" />
                         </linearGradient>
                       </defs>
-                      <circle cx="12" cy="12" r="9" fill="url(#cancelGrad1)" opacity="0.2"/>
-                      <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad1)" strokeWidth="2.5" strokeLinecap="round"/>
+                      <circle cx="12" cy="12" r="10" fill="url(#cancelGrad1)" stroke="#616161" strokeWidth="1"/>
+                      <path d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
-                    {t('common.cancel')}
                   </button>
                 </td>
               </tr>
             )}
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center' }}>{t('trains.noTrains')}</td>
+                <td colSpan="7" style={{ textAlign: 'center' }}>{t('trains.noTrains')}</td>
               </tr>
             ) : (
               trains.map((train) => (
                 <tr
                   key={train.number}
-                  className={selectedTrain === train.number ? 'selected-row' : ''}
+                  className={`${selectedTrain === train.number ? 'selected-row' : ''} ${editingTrainNumber === train.number ? 'editing-row' : ''} ${editingTrainNumber !== train.number ? 'clickable-row' : ''}`}
+                  onClick={() => editingTrainNumber !== train.number && handleRowSelect(train.number)}
                 >
-                  <td>
-                    <input
-                      type="radio"
-                      name="trainSelect"
-                      checked={selectedTrain === train.number}
-                      onChange={() => handleRowSelect(train.number)}
-                    />
-                  </td>
-                  <td>{train.number}</td>
-                  <td>{train.origin}</td>
-                  <td>
+                  <td className="col-train-number">{train.number}</td>
+                  <td className="col-station-number">{train.origin}</td>
+                  <td className="col-station-name">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.origin}
                         onChange={(e) => setEditingTrain({ ...editingTrain, origin: e.target.value })}
                         className="station-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <option value="">{t('trains.selectOrigin')}</option>
                         {stations.map(station => (
@@ -413,13 +399,14 @@ function TrainList() {
                       train.originName || 'N/A'
                     )}
                   </td>
-                  <td>{train.destination}</td>
-                  <td>
+                  <td className="col-station-number">{train.destination}</td>
+                  <td className="col-station-name">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.destination}
                         onChange={(e) => setEditingTrain({ ...editingTrain, destination: e.target.value })}
                         className="station-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <option value="">{t('trains.selectDestination')}</option>
                         {stations.map(station => (
@@ -432,12 +419,13 @@ function TrainList() {
                       train.destinationName || 'N/A'
                     )}
                   </td>
-                  <td>
+                  <td className="col-day">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.dayOfWeek}
                         onChange={(e) => setEditingTrain({ ...editingTrain, dayOfWeek: e.target.value })}
                         className="day-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {DAYS_OF_WEEK.map(day => (
                           <option key={day} value={day}>
@@ -449,34 +437,34 @@ function TrainList() {
                       t(`days.${train.dayOfWeek}`)
                     )}
                   </td>
-                  <td>
+                  <td className="col-actions" onClick={(e) => e.stopPropagation()}>
                     {editingTrainNumber === train.number ? (
                       <>
-                        <button onClick={handleSaveEditTrain} className="btn-save">
-                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                        <button onClick={handleSaveEditTrain} className="btn-icon-save" title={t('common.save')}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="saveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#ffffff" />
-                                <stop offset="100%" stopColor="#c8e6c9" />
+                                <stop offset="0%" stopColor="#81c784" />
+                                <stop offset="50%" stopColor="#4caf50" />
+                                <stop offset="100%" stopColor="#388e3c" />
                               </linearGradient>
                             </defs>
-                            <circle cx="12" cy="12" r="9" fill="url(#saveGrad2)" opacity="0.3"/>
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad2)"/>
+                            <circle cx="12" cy="12" r="10" fill="url(#saveGrad2)" stroke="#2e7d32" strokeWidth="1"/>
+                            <path d="M9 16.17L5.53 12.7l-1.06 1.06L9 18.29l10.53-10.53-1.06-1.06z" fill="white"/>
                           </svg>
-                          {t('common.save')}
                         </button>
-                        <button onClick={handleCancelEdit} className="btn-cancel">
-                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                        <button onClick={handleCancelEdit} className="btn-icon-cancel" title={t('common.cancel')}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="cancelGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#ffffff" />
-                                <stop offset="100%" stopColor="#e0e0e0" />
+                                <stop offset="0%" stopColor="#bdbdbd" />
+                                <stop offset="50%" stopColor="#9e9e9e" />
+                                <stop offset="100%" stopColor="#757575" />
                               </linearGradient>
                             </defs>
-                            <circle cx="12" cy="12" r="9" fill="url(#cancelGrad2)" opacity="0.2"/>
-                            <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad2)" strokeWidth="2.5" strokeLinecap="round"/>
+                            <circle cx="12" cy="12" r="10" fill="url(#cancelGrad2)" stroke="#616161" strokeWidth="1"/>
+                            <path d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
                           </svg>
-                          {t('common.cancel')}
                         </button>
                       </>
                     ) : (

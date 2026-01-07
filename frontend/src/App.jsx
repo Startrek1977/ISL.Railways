@@ -65,8 +65,22 @@ function App() {
           className={activeTab === 'trains' ? 'active' : ''}
           onClick={() => setActiveTab('trains')}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '10px', marginLeft: isRtl ? '10px' : '0', verticalAlign: 'middle' }}>
-            <path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '10px', marginLeft: isRtl ? '10px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="trainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#4fc3f7" />
+                <stop offset="100%" stopColor="#0288d1" />
+              </linearGradient>
+              <linearGradient id="trainGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#b3e5fc" />
+                <stop offset="100%" stopColor="#4fc3f7" />
+              </linearGradient>
+            </defs>
+            <path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2l2-2h4l2 2h2v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4z" fill="url(#trainGradLight)"/>
+            <rect x="6" y="6" width="5" height="4" fill="url(#trainGrad)" rx="0.5"/>
+            <rect x="13" y="6" width="5" height="4" fill="url(#trainGrad)" rx="0.5"/>
+            <circle cx="7.5" cy="15.5" r="1.5" fill="url(#trainGrad)"/>
+            <circle cx="16.5" cy="15.5" r="1.5" fill="url(#trainGrad)"/>
           </svg>
           {t('nav.trains')}
         </button>
@@ -74,13 +88,23 @@ function App() {
           className={activeTab === 'stations' ? 'active' : ''}
           onClick={() => setActiveTab('stations')}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '10px', marginLeft: isRtl ? '10px' : '0', verticalAlign: 'middle' }}>
-            <rect x="3" y="2" width="2" height="20"/>
-            <rect x="19" y="2" width="2" height="20"/>
-            <rect x="5" y="5" width="14" height="1.5"/>
-            <rect x="5" y="9" width="14" height="1.5"/>
-            <rect x="5" y="13" width="14" height="1.5"/>
-            <rect x="5" y="17" width="14" height="1.5"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '10px', marginLeft: isRtl ? '10px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="stationGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#81c784" />
+                <stop offset="100%" stopColor="#388e3c" />
+              </linearGradient>
+              <linearGradient id="stationGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#c8e6c9" />
+                <stop offset="100%" stopColor="#81c784" />
+              </linearGradient>
+            </defs>
+            <rect x="3" y="2" width="2.5" height="20" rx="0.5" fill="url(#stationGrad)"/>
+            <rect x="18.5" y="2" width="2.5" height="20" rx="0.5" fill="url(#stationGrad)"/>
+            <rect x="5.5" y="5" width="13" height="2" rx="0.3" fill="url(#stationGradLight)"/>
+            <rect x="5.5" y="9" width="13" height="2" rx="0.3" fill="url(#stationGradLight)"/>
+            <rect x="5.5" y="13" width="13" height="2" rx="0.3" fill="url(#stationGradLight)"/>
+            <rect x="5.5" y="17" width="13" height="2" rx="0.3" fill="url(#stationGradLight)"/>
           </svg>
           {t('nav.stations')}
         </button>

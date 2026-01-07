@@ -215,14 +215,28 @@ function TrainList() {
           isClearable
         />
         <button onClick={handleSearch} className="btn-search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle' }}>
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="searchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#e0e0e0" />
+              </linearGradient>
+            </defs>
+            <circle cx="10" cy="10" r="6" fill="none" stroke="url(#searchGrad)" strokeWidth="2.5"/>
+            <line x1="14.5" y1="14.5" x2="20" y2="20" stroke="url(#searchGrad)" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
           {t('common.search')}
         </button>
         <button onClick={handleClearFilter} className="btn-clear" disabled={!filterDate}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle' }}>
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="clearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#e0e0e0" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="9" fill="url(#clearGrad)" opacity="0.2"/>
+            <path d="M16 8L8 16M8 8l8 8" stroke="url(#clearGrad)" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
           {t('common.clear')}
         </button>
@@ -230,8 +244,15 @@ function TrainList() {
 
       <div className="table-actions">
         <button onClick={handleAddNewTrain} className="btn-add" disabled={addingNewTrain}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle' }}>
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="addGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#c8e6c9" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="9" fill="url(#addGrad)" opacity="0.3"/>
+            <path d="M12 6v12M6 12h12" stroke="url(#addGrad)" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
           {t('trains.addNew')}
         </button>
@@ -240,8 +261,17 @@ function TrainList() {
           className="btn-delete-selected"
           disabled={!selectedTrain}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle' }}>
-            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+            <defs>
+              <linearGradient id="deleteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#ffcdd2" />
+              </linearGradient>
+            </defs>
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" fill="url(#deleteGrad)" opacity="0.4"/>
+            <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="url(#deleteGrad)"/>
+            <rect x="6" y="7" width="12" height="12" rx="1" fill="none" stroke="url(#deleteGrad)" strokeWidth="1.5"/>
+            <path d="M9 10v7M12 10v7M15 10v7" stroke="url(#deleteGrad)" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
           {t('trains.delete')}
         </button>
@@ -317,14 +347,28 @@ function TrainList() {
                 </td>
                 <td>
                   <button onClick={handleSaveNewTrain} className="btn-save">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle' }}>
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                      <defs>
+                        <linearGradient id="saveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#ffffff" />
+                          <stop offset="100%" stopColor="#c8e6c9" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="12" cy="12" r="9" fill="url(#saveGrad1)" opacity="0.3"/>
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad1)"/>
                     </svg>
                     {t('common.save')}
                   </button>
                   <button onClick={handleCancelNewTrain} className="btn-cancel">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle' }}>
-                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                      <defs>
+                        <linearGradient id="cancelGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#ffffff" />
+                          <stop offset="100%" stopColor="#e0e0e0" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="12" cy="12" r="9" fill="url(#cancelGrad1)" opacity="0.2"/>
+                      <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad1)" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
                     {t('common.cancel')}
                   </button>
@@ -409,22 +453,43 @@ function TrainList() {
                     {editingTrainNumber === train.number ? (
                       <>
                         <button onClick={handleSaveEditTrain} className="btn-save">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle' }}>
-                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                        </svg>
-                        {t('common.save')}
-                      </button>
+                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                            <defs>
+                              <linearGradient id="saveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#ffffff" />
+                                <stop offset="100%" stopColor="#c8e6c9" />
+                              </linearGradient>
+                            </defs>
+                            <circle cx="12" cy="12" r="9" fill="url(#saveGrad2)" opacity="0.3"/>
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad2)"/>
+                          </svg>
+                          {t('common.save')}
+                        </button>
                         <button onClick={handleCancelEdit} className="btn-cancel">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle' }}>
-                          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                        </svg>
-                        {t('common.cancel')}
-                      </button>
+                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                            <defs>
+                              <linearGradient id="cancelGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#ffffff" />
+                                <stop offset="100%" stopColor="#e0e0e0" />
+                              </linearGradient>
+                            </defs>
+                            <circle cx="12" cy="12" r="9" fill="url(#cancelGrad2)" opacity="0.2"/>
+                            <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad2)" strokeWidth="2.5" strokeLinecap="round"/>
+                          </svg>
+                          {t('common.cancel')}
+                        </button>
                       </>
                     ) : (
                       <button onClick={() => handleEditTrain(train)} className="btn-edit">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle' }}>
-                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                          <defs>
+                            <linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#ffffff" />
+                              <stop offset="100%" stopColor="#bbdefb" />
+                            </linearGradient>
+                          </defs>
+                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="url(#editGrad)" opacity="0.4"/>
+                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="url(#editGrad)"/>
                         </svg>
                         {t('common.edit')}
                       </button>

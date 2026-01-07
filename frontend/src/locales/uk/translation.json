@@ -4,6 +4,10 @@
     "footer": "Залізниці Ізраїлю. Створено з React + .NET Core + MSSQL",
     "logoAlt": "Залізниці Ізраїлю"
   },
+  "language": {
+    "selectLanguage": "Оберіть мову",
+    "availableLanguages": "Доступні мови"
+  },
   "nav": {
     "trains": "Поїзди",
     "stations": "Станції"

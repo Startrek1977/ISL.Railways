@@ -4,6 +4,10 @@
     "footer": "רכבת ישראל. נבנה עם React + .NET Core + MSSQL",
     "logoAlt": "רכבת ישראל"
   },
+  "language": {
+    "selectLanguage": "בחר שפה",
+    "availableLanguages": "שפות זמינות"
+  },
   "nav": {
     "trains": "רכבות",
     "stations": "תחנות"

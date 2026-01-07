@@ -4,6 +4,10 @@
     "footer": "ISL Railways. Built with React + .NET Core + MSSQL",
     "logoAlt": "Israel Railways"
   },
+  "language": {
+    "selectLanguage": "Select language",
+    "availableLanguages": "Available languages"
+  },
   "nav": {
     "trains": "Trains",
     "stations": "Stations"

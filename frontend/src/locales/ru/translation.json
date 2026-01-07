@@ -4,6 +4,10 @@
     "footer": "Железные дороги Израиля. Создано с React + .NET Core + MSSQL",
     "logoAlt": "Железные дороги Израиля"
   },
+  "language": {
+    "selectLanguage": "Выберите язык",
+    "availableLanguages": "Доступные языки"
+  },
   "nav": {
     "trains": "Поезда",
     "stations": "Станции"

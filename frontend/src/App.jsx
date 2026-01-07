@@ -1,28 +1,123 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import StationList from './components/StationList';
 import TrainList from './components/TrainList';
 import './App.css';
 
 const languages = [
-  { code: 'en', name: 'English', flag: '/flags/us.svg' },
-  { code: 'he', name: 'עברית', flag: '/flags/il.svg' },
-  { code: 'ru', name: 'Русский', flag: '/flags/ru.svg' },
-  { code: 'uk', name: 'Українська', flag: '/flags/ua.svg' }
+  { code: 'en', name: 'English', nativeName: 'English', flag: '/flags/us.svg' },
+  { code: 'he', name: 'Hebrew', nativeName: 'עברית', flag: '/flags/il.svg' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '/flags/ru.svg' },
+  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '/flags/ua.svg' }
 ];
 
 function App() {
   const [activeTab, setActiveTab] = useState('trains');
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const { t, i18n } = useTranslation();
+  const langSwitcherRef = useRef(null);
+  const menuRef = useRef(null);
+  const toggleButtonRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  const changeLanguage = (lng) => {
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langSwitcherRef.current && !langSwitcherRef.current.contains(event.target)) {
+        setLangMenuOpen(false);
+        setFocusedIndex(-1);
+      }
+    };
+
+    if (langMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [langMenuOpen]);
+
+  const changeLanguage = useCallback((lng) => {
     i18n.changeLanguage(lng);
     setLangMenuOpen(false);
+    setFocusedIndex(-1);
+    toggleButtonRef.current?.focus();
+  }, [i18n]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback((event) => {
+    if (!langMenuOpen) {
+      if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        setLangMenuOpen(true);
+        setFocusedIndex(0);
+      }
+      return;
+    }
+
+    switch (event.key) {
+      case 'Escape':
+        event.preventDefault();
+        setLangMenuOpen(false);
+        setFocusedIndex(-1);
+        toggleButtonRef.current?.focus();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        setFocusedIndex(prev => (prev + 1) % languages.length);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setFocusedIndex(prev => (prev - 1 + languages.length) % languages.length);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (focusedIndex >= 0) {
+          changeLanguage(languages[focusedIndex].code);
+        }
+        break;
+      case 'Tab':
+        setLangMenuOpen(false);
+        setFocusedIndex(-1);
+        break;
+      case 'Home':
+        event.preventDefault();
+        setFocusedIndex(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        setFocusedIndex(languages.length - 1);
+        break;
+      default:
+        break;
+    }
+  }, [langMenuOpen, focusedIndex, changeLanguage]);
+
+  // Focus management for menu items
+  useEffect(() => {
+    if (langMenuOpen && focusedIndex >= 0 && menuRef.current) {
+      const menuItems = menuRef.current.querySelectorAll('.lang-option');
+      menuItems[focusedIndex]?.focus();
+    }
+  }, [focusedIndex, langMenuOpen]);
+
+  const toggleMenu = () => {
+    const newState = !langMenuOpen;
+    setLangMenuOpen(newState);
+    if (newState) {
+      const currentIndex = languages.findIndex(l => l.code === i18n.language);
+      setFocusedIndex(currentIndex >= 0 ? currentIndex : 0);
+    } else {
+      setFocusedIndex(-1);
+    }
   };
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -31,27 +126,62 @@ function App() {
   return (
     <div className="app" dir={isRtl ? 'rtl' : 'ltr'}>
       <header className="app-header">
-        <div className="language-switcher">
+        <div
+          className="language-switcher"
+          ref={langSwitcherRef}
+          onKeyDown={handleKeyDown}
+        >
           <button
-            className="lang-toggle"
-            onClick={() => setLangMenuOpen(!langMenuOpen)}
+            ref={toggleButtonRef}
+            className={`lang-toggle ${langMenuOpen ? 'open' : ''}`}
+            onClick={toggleMenu}
+            aria-haspopup="listbox"
+            aria-expanded={langMenuOpen}
+            aria-label={t('language.selectLanguage', 'Select language')}
+            title={t('language.selectLanguage', 'Select language')}
           >
-            <img src={currentLang.flag} alt={currentLang.name} className="flag-icon" />
-            <span>{currentLang.name}</span>
+            <img src={currentLang.flag} alt="" className="flag-icon" aria-hidden="true" />
+            <span className="lang-name">{currentLang.nativeName}</span>
+            <svg
+              className={`dropdown-arrow ${langMenuOpen ? 'open' : ''}`}
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              aria-hidden="true"
+            >
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
           {langMenuOpen && (
-            <div className="lang-menu">
-              {languages.map(lang => (
-                <button
-                  key={lang.code}
-                  className={`lang-option ${lang.code === i18n.language ? 'active' : ''}`}
-                  onClick={() => changeLanguage(lang.code)}
-                >
-                  <img src={lang.flag} alt={lang.name} className="flag-icon" />
-                  <span>{lang.name}</span>
-                </button>
+            <ul
+              className="lang-menu"
+              ref={menuRef}
+              role="listbox"
+              aria-label={t('language.availableLanguages', 'Available languages')}
+              aria-activedescendant={focusedIndex >= 0 ? `lang-option-${languages[focusedIndex].code}` : undefined}
+            >
+              {languages.map((lang, index) => (
+                <li key={lang.code} role="presentation">
+                  <button
+                    id={`lang-option-${lang.code}`}
+                    className={`lang-option ${lang.code === i18n.language ? 'active' : ''} ${index === focusedIndex ? 'focused' : ''}`}
+                    onClick={() => changeLanguage(lang.code)}
+                    role="option"
+                    aria-selected={lang.code === i18n.language}
+                    tabIndex={index === focusedIndex ? 0 : -1}
+                    title={lang.name !== lang.nativeName ? `${lang.name} (${lang.nativeName})` : lang.name}
+                  >
+                    <img src={lang.flag} alt="" className="flag-icon" aria-hidden="true" />
+                    <span className="lang-native-name">{lang.nativeName}</span>
+                    {lang.code === i18n.language && (
+                      <svg className="checkmark" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M3 8L6.5 11.5L13 4.5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
         <div className="header-content">

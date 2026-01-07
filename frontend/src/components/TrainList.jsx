@@ -481,7 +481,7 @@ function TrainList() {
                       </>
                     ) : (
                       <button onClick={() => handleEditTrain(train)} className="btn-edit" title={t('common.edit')}>
-                        <svg width="22" height="22" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                           <defs>
                             <linearGradient id={`pencilBody${train.number}`} x1="0%" y1="0%" x2="100%" y2="100%">
                               <stop offset="0%" stopColor="#ffeb3b" />
@@ -503,15 +503,15 @@ function TrainList() {
                             </linearGradient>
                           </defs>
                           {/* Main pencil body - yellow/orange */}
-                          <polygon points="7,14 15,6 19,10 11,18" fill={`url(#pencilBody${train.number})`} stroke="#e65100" strokeWidth="0.8"/>
+                          <polygon points="7,14 15,6 19,10 11,18" fill={`url(#pencilBody${train.number})`} stroke="#e65100" strokeWidth="1"/>
                           {/* Wood tip - triangular cone */}
-                          <polygon points="2,22 11,18 7,14" fill={`url(#pencilWood${train.number})`} stroke="#8d6e63" strokeWidth="0.5"/>
+                          <polygon points="2,22 11,18 7,14" fill={`url(#pencilWood${train.number})`} stroke="#8d6e63" strokeWidth="0.7"/>
                           {/* Graphite core - centered in wood tip */}
                           <polygon points="2,22 6.5,20 4.5,18" fill="#303030"/>
                           {/* Metal ferrule band */}
-                          <polygon points="15,6 19,10 20.5,8.5 16.5,4.5" fill={`url(#pencilFerrule${train.number})`} stroke="#616161" strokeWidth="0.5"/>
+                          <polygon points="15,6 19,10 20.5,8.5 16.5,4.5" fill={`url(#pencilFerrule${train.number})`} stroke="#616161" strokeWidth="0.7"/>
                           {/* Eraser */}
-                          <polygon points="16.5,4.5 20.5,8.5 22,7 21,4 18,3" fill={`url(#pencilEraser${train.number})`} stroke="#c2185b" strokeWidth="0.5"/>
+                          <polygon points="16.5,4.5 20.5,8.5 22,7 21,4 18,3" fill={`url(#pencilEraser${train.number})`} stroke="#c2185b" strokeWidth="0.7"/>
                         </svg>
                       </button>
                     )}

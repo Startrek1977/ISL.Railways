@@ -480,18 +480,39 @@ function TrainList() {
                         </button>
                       </>
                     ) : (
-                      <button onClick={() => handleEditTrain(train)} className="btn-edit">
-                        <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                      <button onClick={() => handleEditTrain(train)} className="btn-edit" title={t('common.edit')}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                           <defs>
-                            <linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor="#ffffff" />
-                              <stop offset="100%" stopColor="#bbdefb" />
+                            <linearGradient id={`pencilBody${train.number}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#ffeb3b" />
+                              <stop offset="50%" stopColor="#ffc107" />
+                              <stop offset="100%" stopColor="#ff9800" />
+                            </linearGradient>
+                            <linearGradient id={`pencilWood${train.number}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#ffe0b2" />
+                              <stop offset="100%" stopColor="#c8a06e" />
+                            </linearGradient>
+                            <linearGradient id={`pencilEraser${train.number}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#f8bbd9" />
+                              <stop offset="100%" stopColor="#e91e63" />
+                            </linearGradient>
+                            <linearGradient id={`pencilFerrule${train.number}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#e0e0e0" />
+                              <stop offset="50%" stopColor="#9e9e9e" />
+                              <stop offset="100%" stopColor="#757575" />
                             </linearGradient>
                           </defs>
-                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="url(#editGrad)" opacity="0.4"/>
-                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="url(#editGrad)"/>
+                          {/* Main pencil body - yellow/orange */}
+                          <polygon points="7,14 15,6 19,10 11,18" fill={`url(#pencilBody${train.number})`} stroke="#e65100" strokeWidth="0.8"/>
+                          {/* Wood tip - triangular cone */}
+                          <polygon points="2,22 11,18 7,14" fill={`url(#pencilWood${train.number})`} stroke="#8d6e63" strokeWidth="0.5"/>
+                          {/* Graphite core - centered in wood tip */}
+                          <polygon points="2,22 6.5,20 4.5,18" fill="#303030"/>
+                          {/* Metal ferrule band */}
+                          <polygon points="15,6 19,10 20.5,8.5 16.5,4.5" fill={`url(#pencilFerrule${train.number})`} stroke="#616161" strokeWidth="0.5"/>
+                          {/* Eraser */}
+                          <polygon points="16.5,4.5 20.5,8.5 22,7 21,4 18,3" fill={`url(#pencilEraser${train.number})`} stroke="#c2185b" strokeWidth="0.5"/>
                         </svg>
-                        {t('common.edit')}
                       </button>
                     )}
                   </td>

@@ -334,10 +334,23 @@ function TrainList() {
 
       <div className="trains-table-container" ref={tableContainerRef}>
         <table className="trains-table">
+          <colgroup>
+            <col style={{ width: '80px', minWidth: '80px' }} />   {/* Train number - fixed */}
+            <col style={{ width: '80px', minWidth: '80px' }} />    {/* Origin number - fixed */}
+            <col />                                                {/* Origin name */}
+            <col style={{ width: '80px', minWidth: '80px' }} />    {/* Destination number - fixed */}
+            <col />                                                {/* Destination name */}
+            <col style={{ width: '160px', minWidth: '160px' }} /> {/* Day of week - fixed */}
+            <col style={{ width: '115px', minWidth: '115px' }} /> {/* Actions - fixed */}
+          </colgroup>
           <thead>
             <tr>
-              <th className="col-train-number">{t('trains.headers.trainNumber')}</th>
-              <th className="col-station-number">{t('trains.headers.originNumber')}</th>
+              <th className="col-train-number">
+                <svg width="28" height="28" viewBox="0 0 28 28" style={{ verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))' }}>
+                  <text x="14" y="21" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="bold" fontFamily="Arial, sans-serif">№</text>
+                </svg>
+              </th>
+              <th className="col-station-number"></th>
               <th className="col-station-name">
                 <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
                   <defs>
@@ -377,7 +390,7 @@ function TrainList() {
                 </svg>
                 {t('trains.headers.originName')}
               </th>
-              <th className="col-station-number">{t('trains.headers.destinationNumber')}</th>
+              <th className="col-station-number"></th>
               <th className="col-station-name">
                 <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
                   <defs>
@@ -417,7 +430,33 @@ function TrainList() {
                 </svg>
                 {t('trains.headers.destinationName')}
               </th>
-              <th className="col-day">{t('trains.headers.dayOfWeek')}</th>
+              <th className="col-day">
+                <svg width="36" height="24" viewBox="0 0 36 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))' }}>
+                  <defs>
+                    <linearGradient id="weekBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#5c6bc0" />
+                      <stop offset="100%" stopColor="#3949ab" />
+                    </linearGradient>
+                    <linearGradient id="selectedDayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#ff7043" />
+                      <stop offset="100%" stopColor="#e64a19" />
+                    </linearGradient>
+                  </defs>
+                  {/* Week strip background */}
+                  <rect x="1" y="4" width="34" height="16" rx="3" fill="url(#weekBgGrad)"/>
+                  {/* 7 day slots */}
+                  <rect x="2.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="6.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="10.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="14.5" y="6" width="3.5" height="12" rx="1" fill="url(#selectedDayGrad)"/>
+                  <rect x="18.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="22.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="26.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  {/* Arrow indicator above selected day */}
+                  <polygon points="16.25,2 18,5 14.5,5" fill="url(#selectedDayGrad)"/>
+                </svg>
+                {t('trains.headers.dayOfWeek')}
+              </th>
               <th className="col-actions">{t('trains.headers.actions')}</th>
             </tr>
           </thead>

@@ -180,9 +180,13 @@
 
 .trains-table th {
   padding: 15px;
-  text-align: center;
+  text-align: left;
   font-weight: 600;
   white-space: nowrap;
+}
+
+[dir="rtl"] .trains-table th {
+  text-align: right;
 }
 
 .trains-table td {

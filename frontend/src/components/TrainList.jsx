@@ -339,72 +339,80 @@ function TrainList() {
               <th className="col-train-number">{t('trains.headers.trainNumber')}</th>
               <th className="col-station-number">{t('trains.headers.originNumber')}</th>
               <th className="col-station-name">
-                <svg width="36" height="36" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
                   <defs>
-                    <linearGradient id="platformSign1" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#1565c0" />
+                    <linearGradient id="departTrainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#42a5f5" />
                       <stop offset="50%" stopColor="#1976d2" />
                       <stop offset="100%" stopColor="#0d47a1" />
                     </linearGradient>
-                    <linearGradient id="bracket1" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#757575" />
-                      <stop offset="50%" stopColor="#9e9e9e" />
-                      <stop offset="100%" stopColor="#616161" />
+                    <linearGradient id="departArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#ff7043" />
+                      <stop offset="50%" stopColor="#f4511e" />
+                      <stop offset="100%" stopColor="#d84315" />
                     </linearGradient>
                   </defs>
-                  {/* Top rail/bar */}
-                  <rect x="1" y="2" width="22" height="3" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.5" rx="1"/>
-                  {/* Hanging chains/brackets */}
-                  <rect x="4" y="5" width="1.5" height="4" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.3"/>
-                  <rect x="18.5" y="5" width="1.5" height="4" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.3"/>
-                  {/* Main sign board */}
-                  <rect x="2" y="9" width="20" height="12" fill="url(#platformSign1)" stroke="#0d47a1" strokeWidth="0.5" rx="1"/>
-                  {/* White border inside */}
-                  <rect x="3.5" y="10.5" width="17" height="9" fill="none" stroke="white" strokeWidth="0.5" rx="0.5"/>
-                  {/* Train departing - facing away */}
-                  <g transform={isRtl ? "translate(12, 15) scale(-0.65, 0.65)" : "translate(12, 15) scale(0.65, 0.65)"}>
-                    <g transform="translate(-12.5, -5.5)">
-                      <path d="M0,0 L14.2276931,0 C19.8997459,0 25,4.91810349 25,8.79081655 C25,10.0060762 23.9701728,11 22.7127541,11 L0,11 L0,0 Z" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M24.4140625,6.57054014 L17.092219,6.57054014 C16.0819996,6.57054014 15.2560976,5.61001065 15.2560976,4.43511891 L15.2560976,2.29832263 L20.7344813,2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <rect x="5.64613821" y="2.29832263" width="6.56077236" height="4.27221751" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <polyline points="0 6.57054014 2.59695122 6.57054014 2.59695122 2.29832263 0 2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <g transform={isRtl ? "translate(40, 0) scale(-1, 1)" : ""}>
+                    {/* Platform/station indicator - vertical bar on left */}
+                    <rect x="1" y="4" width="3" height="16" fill="#78909c" rx="1"/>
+                    <rect x="0" y="2" width="5" height="3" fill="#546e7a" rx="1"/>
+                    {/* Train moving away from platform */}
+                    <g transform="translate(8, 6)">
+                      <path d="M0,0 L12,0 C16,0 19,3 19,6 L19,10 L0,10 Z" fill="url(#departTrainGrad)" stroke="#0d47a1" strokeWidth="0.5"/>
+                      <rect x="2" y="2" width="4" height="3" rx="0.5" fill="#e3f2fd" stroke="#1565c0" strokeWidth="0.3"/>
+                      <rect x="7" y="2" width="4" height="3" rx="0.5" fill="#e3f2fd" stroke="#1565c0" strokeWidth="0.3"/>
+                      <rect x="13" y="2" width="4" height="4" rx="0.5" fill="#bbdefb" stroke="#1565c0" strokeWidth="0.3"/>
+                      <circle cx="4" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                      <circle cx="12" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
                     </g>
+                    {/* Departure arrow - pointing right/away */}
+                    <g transform="translate(30, 8)">
+                      <path d="M0,4 L6,4 L6,1 L10,5 L6,9 L6,6 L0,6 Z" fill="url(#departArrowGrad)" stroke="#bf360c" strokeWidth="0.5"/>
+                    </g>
+                    {/* Motion lines - showing movement away */}
+                    <line x1="6" y1="10" x2="3" y2="10" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
+                    <line x1="6" y1="13" x2="2" y2="13" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                    <line x1="6" y1="16" x2="4" y2="16" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
                   </g>
                 </svg>
                 {t('trains.headers.originName')}
               </th>
               <th className="col-station-number">{t('trains.headers.destinationNumber')}</th>
               <th className="col-station-name">
-                <svg width="36" height="36" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
                   <defs>
-                    <linearGradient id="platformSign2" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#2e7d32" />
-                      <stop offset="50%" stopColor="#388e3c" />
+                    <linearGradient id="arriveTrainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#66bb6a" />
+                      <stop offset="50%" stopColor="#43a047" />
                       <stop offset="100%" stopColor="#1b5e20" />
                     </linearGradient>
-                    <linearGradient id="bracket2" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#757575" />
-                      <stop offset="50%" stopColor="#9e9e9e" />
-                      <stop offset="100%" stopColor="#616161" />
+                    <linearGradient id="arriveArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#66bb6a" />
+                      <stop offset="50%" stopColor="#43a047" />
+                      <stop offset="100%" stopColor="#2e7d32" />
                     </linearGradient>
                   </defs>
-                  {/* Top rail/bar */}
-                  <rect x="1" y="2" width="22" height="3" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.5" rx="1"/>
-                  {/* Hanging chains/brackets */}
-                  <rect x="4" y="5" width="1.5" height="4" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.3"/>
-                  <rect x="18.5" y="5" width="1.5" height="4" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.3"/>
-                  {/* Main sign board */}
-                  <rect x="2" y="9" width="20" height="12" fill="url(#platformSign2)" stroke="#1b5e20" strokeWidth="0.5" rx="1"/>
-                  {/* White border inside */}
-                  <rect x="3.5" y="10.5" width="17" height="9" fill="none" stroke="white" strokeWidth="0.5" rx="0.5"/>
-                  {/* Train arriving - facing toward */}
-                  <g transform={isRtl ? "translate(12, 15) scale(0.65, 0.65)" : "translate(12, 15) scale(-0.65, 0.65)"}>
-                    <g transform="translate(-12.5, -5.5)">
-                      <path d="M0,0 L14.2276931,0 C19.8997459,0 25,4.91810349 25,8.79081655 C25,10.0060762 23.9701728,11 22.7127541,11 L0,11 L0,0 Z" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M24.4140625,6.57054014 L17.092219,6.57054014 C16.0819996,6.57054014 15.2560976,5.61001065 15.2560976,4.43511891 L15.2560976,2.29832263 L20.7344813,2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <rect x="5.64613821" y="2.29832263" width="6.56077236" height="4.27221751" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                      <polyline points="0 6.57054014 2.59695122 6.57054014 2.59695122 2.29832263 0 2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <g transform={isRtl ? "translate(40, 0) scale(-1, 1)" : ""}>
+                    {/* Platform/station indicator - vertical bar on right */}
+                    <rect x="36" y="4" width="3" height="16" fill="#78909c" rx="1"/>
+                    <rect x="35" y="2" width="5" height="3" fill="#546e7a" rx="1"/>
+                    {/* Train approaching platform - nose facing right toward station */}
+                    <g transform="translate(4, 6)">
+                      <path d="M0,0 L12,0 C16,0 19,3 19,6 L19,10 L0,10 Z" fill="url(#arriveTrainGrad)" stroke="#1b5e20" strokeWidth="0.5"/>
+                      <rect x="2" y="2" width="4" height="3" rx="0.5" fill="#e8f5e9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <rect x="7" y="2" width="4" height="3" rx="0.5" fill="#e8f5e9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <rect x="13" y="2" width="4" height="4" rx="0.5" fill="#c8e6c9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <circle cx="4" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                      <circle cx="12" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
                     </g>
+                    {/* Arrival arrow - pointing right toward platform */}
+                    <g transform="translate(25, 8)">
+                      <path d="M0,4 L6,4 L6,1 L10,5 L6,9 L6,6 L0,6 Z" fill="url(#arriveArrowGrad)" stroke="#1b5e20" strokeWidth="0.5"/>
+                    </g>
+                    {/* Motion lines - trailing behind the train (on left) */}
+                    <line x1="2" y1="10" x2="0" y2="10" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
+                    <line x1="3" y1="13" x2="0" y2="13" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                    <line x1="2" y1="16" x2="1" y2="16" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
                   </g>
                 </svg>
                 {t('trains.headers.destinationName')}

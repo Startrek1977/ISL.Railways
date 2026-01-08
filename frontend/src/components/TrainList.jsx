@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -27,11 +27,64 @@ function TrainList() {
   const [newTrain, setNewTrain] = useState(null);
   const [selectedTrain, setSelectedTrain] = useState(null);
   const [filterDate, setFilterDate] = useState(null);
+  const tableContainerRef = useRef(null);
 
   useEffect(() => {
     fetchTrains();
     fetchStations();
   }, []);
+
+  // Handle Escape key to cancel editing
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'Escape') {
+      if (editingTrainNumber !== null) {
+        setEditingTrainNumber(null);
+        setEditingTrain(null);
+        setError('');
+      } else if (addingNewTrain) {
+        setAddingNewTrain(false);
+        setNewTrain(null);
+        setError('');
+      }
+      // Remove focus from any active element
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+    }
+  }, [editingTrainNumber, addingNewTrain]);
+
+  useEffect(() => {
+    if (editingTrainNumber !== null || addingNewTrain) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [editingTrainNumber, addingNewTrain, handleKeyDown]);
+
+  // Handle click outside table to cancel editing
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tableContainerRef.current && !tableContainerRef.current.contains(event.target)) {
+        if (editingTrainNumber !== null) {
+          setEditingTrainNumber(null);
+          setEditingTrain(null);
+          setError('');
+        } else if (addingNewTrain) {
+          setAddingNewTrain(false);
+          setNewTrain(null);
+          setError('');
+        }
+      }
+    };
+
+    if (editingTrainNumber !== null || addingNewTrain) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [editingTrainNumber, addingNewTrain]);
 
   const formatDateForApi = (date) => {
     if (!date) return null;
@@ -137,6 +190,8 @@ function TrainList() {
       destination: train.destination.toString(),
       dayOfWeek: train.dayOfWeek
     });
+    // Automatically select the row being edited
+    setSelectedTrain(train.number);
     setError('');
   };
 
@@ -277,33 +332,140 @@ function TrainList() {
         </button>
       </div>
 
-      <div className="trains-table-container">
+      <div className="trains-table-container" ref={tableContainerRef}>
         <table className="trains-table">
+          <colgroup>
+            <col style={{ width: '80px', minWidth: '80px' }} />   {/* Train number - fixed */}
+            <col style={{ width: '80px', minWidth: '80px' }} />    {/* Origin number - fixed */}
+            <col />                                                {/* Origin name */}
+            <col style={{ width: '80px', minWidth: '80px' }} />    {/* Destination number - fixed */}
+            <col />                                                {/* Destination name */}
+            <col style={{ width: '160px', minWidth: '160px' }} /> {/* Day of week - fixed */}
+            <col style={{ width: '115px', minWidth: '115px' }} /> {/* Actions - fixed */}
+          </colgroup>
           <thead>
             <tr>
-              <th style={{ width: '40px' }}></th>
-              <th>{t('trains.headers.trainNumber')}</th>
-              <th>{t('trains.headers.originNumber')}</th>
-              <th>{t('trains.headers.originName')}</th>
-              <th>{t('trains.headers.destinationNumber')}</th>
-              <th>{t('trains.headers.destinationName')}</th>
-              <th>{t('trains.headers.dayOfWeek')}</th>
-              <th>{t('trains.headers.actions')}</th>
+              <th className="col-train-number">
+                <svg width="28" height="28" viewBox="0 0 28 28" style={{ verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))' }}>
+                  <text x="14" y="21" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="bold" fontFamily="Arial, sans-serif">№</text>
+                </svg>
+              </th>
+              <th className="col-station-number"></th>
+              <th className="col-station-name">
+                <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
+                  <defs>
+                    <linearGradient id="departTrainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#42a5f5" />
+                      <stop offset="50%" stopColor="#1976d2" />
+                      <stop offset="100%" stopColor="#0d47a1" />
+                    </linearGradient>
+                    <linearGradient id="departArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#ff7043" />
+                      <stop offset="50%" stopColor="#f4511e" />
+                      <stop offset="100%" stopColor="#d84315" />
+                    </linearGradient>
+                  </defs>
+                  <g transform={isRtl ? "translate(40, 0) scale(-1, 1)" : ""}>
+                    {/* Platform/station indicator - vertical bar on left */}
+                    <rect x="1" y="4" width="3" height="16" fill="#78909c" rx="1"/>
+                    <rect x="0" y="2" width="5" height="3" fill="#546e7a" rx="1"/>
+                    {/* Train moving away from platform */}
+                    <g transform="translate(8, 6)">
+                      <path d="M0,0 L12,0 C16,0 19,3 19,6 L19,10 L0,10 Z" fill="url(#departTrainGrad)" stroke="#0d47a1" strokeWidth="0.5"/>
+                      <rect x="2" y="2" width="4" height="3" rx="0.5" fill="#e3f2fd" stroke="#1565c0" strokeWidth="0.3"/>
+                      <rect x="7" y="2" width="4" height="3" rx="0.5" fill="#e3f2fd" stroke="#1565c0" strokeWidth="0.3"/>
+                      <rect x="13" y="2" width="4" height="4" rx="0.5" fill="#bbdefb" stroke="#1565c0" strokeWidth="0.3"/>
+                      <circle cx="4" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                      <circle cx="12" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                    </g>
+                    {/* Departure arrow - pointing right/away */}
+                    <g transform="translate(30, 8)">
+                      <path d="M0,4 L6,4 L6,1 L10,5 L6,9 L6,6 L0,6 Z" fill="url(#departArrowGrad)" stroke="#bf360c" strokeWidth="0.5"/>
+                    </g>
+                    {/* Motion lines - showing movement away */}
+                    <line x1="6" y1="10" x2="3" y2="10" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
+                    <line x1="6" y1="13" x2="2" y2="13" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                    <line x1="6" y1="16" x2="4" y2="16" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
+                  </g>
+                </svg>
+                {t('trains.headers.originName')}
+              </th>
+              <th className="col-station-number"></th>
+              <th className="col-station-name">
+                <svg width="64" height="40" viewBox="0 0 40 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))' }}>
+                  <defs>
+                    <linearGradient id="arriveTrainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#66bb6a" />
+                      <stop offset="50%" stopColor="#43a047" />
+                      <stop offset="100%" stopColor="#1b5e20" />
+                    </linearGradient>
+                    <linearGradient id="arriveArrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#66bb6a" />
+                      <stop offset="50%" stopColor="#43a047" />
+                      <stop offset="100%" stopColor="#2e7d32" />
+                    </linearGradient>
+                  </defs>
+                  <g transform={isRtl ? "translate(40, 0) scale(-1, 1)" : ""}>
+                    {/* Platform/station indicator - vertical bar on right */}
+                    <rect x="36" y="4" width="3" height="16" fill="#78909c" rx="1"/>
+                    <rect x="35" y="2" width="5" height="3" fill="#546e7a" rx="1"/>
+                    {/* Train approaching platform - nose facing right toward station */}
+                    <g transform="translate(4, 6)">
+                      <path d="M0,0 L12,0 C16,0 19,3 19,6 L19,10 L0,10 Z" fill="url(#arriveTrainGrad)" stroke="#1b5e20" strokeWidth="0.5"/>
+                      <rect x="2" y="2" width="4" height="3" rx="0.5" fill="#e8f5e9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <rect x="7" y="2" width="4" height="3" rx="0.5" fill="#e8f5e9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <rect x="13" y="2" width="4" height="4" rx="0.5" fill="#c8e6c9" stroke="#2e7d32" strokeWidth="0.3"/>
+                      <circle cx="4" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                      <circle cx="12" cy="11" r="2" fill="#424242" stroke="#212121" strokeWidth="0.5"/>
+                    </g>
+                    {/* Arrival arrow - pointing right toward platform */}
+                    <g transform="translate(25, 8)">
+                      <path d="M0,4 L6,4 L6,1 L10,5 L6,9 L6,6 L0,6 Z" fill="url(#arriveArrowGrad)" stroke="#1b5e20" strokeWidth="0.5"/>
+                    </g>
+                    {/* Motion lines - trailing behind the train (on left) */}
+                    <line x1="2" y1="10" x2="0" y2="10" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
+                    <line x1="3" y1="13" x2="0" y2="13" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                    <line x1="2" y1="16" x2="1" y2="16" stroke="#90a4ae" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
+                  </g>
+                </svg>
+                {t('trains.headers.destinationName')}
+              </th>
+              <th className="col-day">
+                <svg width="36" height="24" viewBox="0 0 36 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))' }}>
+                  <defs>
+                    <linearGradient id="weekBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#5c6bc0" />
+                      <stop offset="100%" stopColor="#3949ab" />
+                    </linearGradient>
+                    <linearGradient id="selectedDayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#ff7043" />
+                      <stop offset="100%" stopColor="#e64a19" />
+                    </linearGradient>
+                  </defs>
+                  {/* Week strip background */}
+                  <rect x="1" y="4" width="34" height="16" rx="3" fill="url(#weekBgGrad)"/>
+                  {/* 7 day slots */}
+                  <rect x="2.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="6.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="10.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="14.5" y="6" width="3.5" height="12" rx="1" fill="url(#selectedDayGrad)"/>
+                  <rect x="18.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="22.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  <rect x="26.5" y="6" width="3.5" height="12" rx="1" fill="#7986cb" opacity="0.6"/>
+                  {/* Arrow indicator above selected day */}
+                  <polygon points="16.25,2 18,5 14.5,5" fill="url(#selectedDayGrad)"/>
+                </svg>
+                {t('trains.headers.dayOfWeek')}
+              </th>
+              <th className="col-actions">{t('trains.headers.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {addingNewTrain && newTrain && (
               <tr className="editing-row">
-                <td>
-                  <input
-                    type="radio"
-                    name="trainSelect"
-                    disabled
-                  />
-                </td>
-                <td>{newTrain.number}</td>
-                <td>{newTrain.origin || '-'}</td>
-                <td>
+                <td className="col-train-number">{newTrain.number}</td>
+                <td className="col-station-number">{newTrain.origin || '-'}</td>
+                <td className="col-station-name">
                   <select
                     value={newTrain.origin}
                     onChange={(e) => setNewTrain({ ...newTrain, origin: e.target.value })}
@@ -317,8 +479,8 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>{newTrain.destination || '-'}</td>
-                <td>
+                <td className="col-station-number">{newTrain.destination || '-'}</td>
+                <td className="col-station-name">
                   <select
                     value={newTrain.destination}
                     onChange={(e) => setNewTrain({ ...newTrain, destination: e.target.value })}
@@ -332,7 +494,7 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td className="col-day">
                   <select
                     value={newTrain.dayOfWeek}
                     onChange={(e) => setNewTrain({ ...newTrain, dayOfWeek: e.target.value })}
@@ -345,62 +507,56 @@ function TrainList() {
                     ))}
                   </select>
                 </td>
-                <td>
-                  <button onClick={handleSaveNewTrain} className="btn-save">
-                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                <td className="col-actions">
+                  <button onClick={handleSaveNewTrain} className="btn-icon-save" title={t('common.save')}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="saveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffffff" />
-                          <stop offset="100%" stopColor="#c8e6c9" />
+                          <stop offset="0%" stopColor="#81c784" />
+                          <stop offset="50%" stopColor="#4caf50" />
+                          <stop offset="100%" stopColor="#388e3c" />
                         </linearGradient>
                       </defs>
-                      <circle cx="12" cy="12" r="9" fill="url(#saveGrad1)" opacity="0.3"/>
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad1)"/>
+                      <circle cx="12" cy="12" r="10" fill="url(#saveGrad1)" stroke="#2e7d32" strokeWidth="1"/>
+                      <path d="M9 16.17L5.53 12.7l-1.06 1.06L9 18.29l10.53-10.53-1.06-1.06z" fill="white"/>
                     </svg>
-                    {t('common.save')}
                   </button>
-                  <button onClick={handleCancelNewTrain} className="btn-cancel">
-                    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                  <button onClick={handleCancelNewTrain} className="btn-icon-cancel" title={t('common.cancel')}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="cancelGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffffff" />
-                          <stop offset="100%" stopColor="#e0e0e0" />
+                          <stop offset="0%" stopColor="#bdbdbd" />
+                          <stop offset="50%" stopColor="#9e9e9e" />
+                          <stop offset="100%" stopColor="#757575" />
                         </linearGradient>
                       </defs>
-                      <circle cx="12" cy="12" r="9" fill="url(#cancelGrad1)" opacity="0.2"/>
-                      <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad1)" strokeWidth="2.5" strokeLinecap="round"/>
+                      <circle cx="12" cy="12" r="10" fill="url(#cancelGrad1)" stroke="#616161" strokeWidth="1"/>
+                      <path d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
-                    {t('common.cancel')}
                   </button>
                 </td>
               </tr>
             )}
             {trains.length === 0 && !addingNewTrain ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center' }}>{t('trains.noTrains')}</td>
+                <td colSpan="7" style={{ textAlign: 'center' }}>{t('trains.noTrains')}</td>
               </tr>
             ) : (
               trains.map((train) => (
                 <tr
                   key={train.number}
-                  className={selectedTrain === train.number ? 'selected-row' : ''}
+                  className={`${selectedTrain === train.number ? 'selected-row' : ''} ${editingTrainNumber === train.number ? 'editing-row' : ''} ${editingTrainNumber === null && !addingNewTrain ? 'clickable-row' : ''} ${(editingTrainNumber !== null || addingNewTrain) && editingTrainNumber !== train.number ? 'disabled-row' : ''}`}
+                  onClick={() => editingTrainNumber === null && !addingNewTrain && handleRowSelect(train.number)}
                 >
-                  <td>
-                    <input
-                      type="radio"
-                      name="trainSelect"
-                      checked={selectedTrain === train.number}
-                      onChange={() => handleRowSelect(train.number)}
-                    />
-                  </td>
-                  <td>{train.number}</td>
-                  <td>{train.origin}</td>
-                  <td>
+                  <td className="col-train-number">{train.number}</td>
+                  <td className="col-station-number">{train.origin}</td>
+                  <td className="col-station-name">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.origin}
                         onChange={(e) => setEditingTrain({ ...editingTrain, origin: e.target.value })}
                         className="station-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <option value="">{t('trains.selectOrigin')}</option>
                         {stations.map(station => (
@@ -413,13 +569,14 @@ function TrainList() {
                       train.originName || 'N/A'
                     )}
                   </td>
-                  <td>{train.destination}</td>
-                  <td>
+                  <td className="col-station-number">{train.destination}</td>
+                  <td className="col-station-name">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.destination}
                         onChange={(e) => setEditingTrain({ ...editingTrain, destination: e.target.value })}
                         className="station-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <option value="">{t('trains.selectDestination')}</option>
                         {stations.map(station => (
@@ -432,12 +589,13 @@ function TrainList() {
                       train.destinationName || 'N/A'
                     )}
                   </td>
-                  <td>
+                  <td className="col-day">
                     {editingTrainNumber === train.number ? (
                       <select
                         value={editingTrain.dayOfWeek}
                         onChange={(e) => setEditingTrain({ ...editingTrain, dayOfWeek: e.target.value })}
                         className="day-select"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {DAYS_OF_WEEK.map(day => (
                           <option key={day} value={day}>
@@ -449,34 +607,34 @@ function TrainList() {
                       t(`days.${train.dayOfWeek}`)
                     )}
                   </td>
-                  <td>
+                  <td className="col-actions" onClick={(e) => e.stopPropagation()}>
                     {editingTrainNumber === train.number ? (
                       <>
-                        <button onClick={handleSaveEditTrain} className="btn-save">
-                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                        <button onClick={handleSaveEditTrain} className="btn-icon-save" title={t('common.save')}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="saveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#ffffff" />
-                                <stop offset="100%" stopColor="#c8e6c9" />
+                                <stop offset="0%" stopColor="#81c784" />
+                                <stop offset="50%" stopColor="#4caf50" />
+                                <stop offset="100%" stopColor="#388e3c" />
                               </linearGradient>
                             </defs>
-                            <circle cx="12" cy="12" r="9" fill="url(#saveGrad2)" opacity="0.3"/>
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="url(#saveGrad2)"/>
+                            <circle cx="12" cy="12" r="10" fill="url(#saveGrad2)" stroke="#2e7d32" strokeWidth="1"/>
+                            <path d="M9 16.17L5.53 12.7l-1.06 1.06L9 18.29l10.53-10.53-1.06-1.06z" fill="white"/>
                           </svg>
-                          {t('common.save')}
                         </button>
-                        <button onClick={handleCancelEdit} className="btn-cancel">
-                          <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '4px', marginLeft: isRtl ? '4px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                        <button onClick={handleCancelEdit} className="btn-icon-cancel" title={t('common.cancel')}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="cancelGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#ffffff" />
-                                <stop offset="100%" stopColor="#e0e0e0" />
+                                <stop offset="0%" stopColor="#bdbdbd" />
+                                <stop offset="50%" stopColor="#9e9e9e" />
+                                <stop offset="100%" stopColor="#757575" />
                               </linearGradient>
                             </defs>
-                            <circle cx="12" cy="12" r="9" fill="url(#cancelGrad2)" opacity="0.2"/>
-                            <path d="M16 8L8 16M8 8l8 8" stroke="url(#cancelGrad2)" strokeWidth="2.5" strokeLinecap="round"/>
+                            <circle cx="12" cy="12" r="10" fill="url(#cancelGrad2)" stroke="#616161" strokeWidth="1"/>
+                            <path d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
                           </svg>
-                          {t('common.cancel')}
                         </button>
                       </>
                     ) : (

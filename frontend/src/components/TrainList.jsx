@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -27,6 +27,7 @@ function TrainList() {
   const [newTrain, setNewTrain] = useState(null);
   const [selectedTrain, setSelectedTrain] = useState(null);
   const [filterDate, setFilterDate] = useState(null);
+  const tableContainerRef = useRef(null);
 
   useEffect(() => {
     fetchTrains();
@@ -60,6 +61,30 @@ function TrainList() {
       };
     }
   }, [editingTrainNumber, addingNewTrain, handleKeyDown]);
+
+  // Handle click outside table to cancel editing
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tableContainerRef.current && !tableContainerRef.current.contains(event.target)) {
+        if (editingTrainNumber !== null) {
+          setEditingTrainNumber(null);
+          setEditingTrain(null);
+          setError('');
+        } else if (addingNewTrain) {
+          setAddingNewTrain(false);
+          setNewTrain(null);
+          setError('');
+        }
+      }
+    };
+
+    if (editingTrainNumber !== null || addingNewTrain) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [editingTrainNumber, addingNewTrain]);
 
   const formatDateForApi = (date) => {
     if (!date) return null;
@@ -307,15 +332,83 @@ function TrainList() {
         </button>
       </div>
 
-      <div className="trains-table-container">
+      <div className="trains-table-container" ref={tableContainerRef}>
         <table className="trains-table">
           <thead>
             <tr>
               <th className="col-train-number">{t('trains.headers.trainNumber')}</th>
               <th className="col-station-number">{t('trains.headers.originNumber')}</th>
-              <th className="col-station-name">{t('trains.headers.originName')}</th>
+              <th className="col-station-name">
+                <svg width="36" height="36" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                  <defs>
+                    <linearGradient id="platformSign1" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#1565c0" />
+                      <stop offset="50%" stopColor="#1976d2" />
+                      <stop offset="100%" stopColor="#0d47a1" />
+                    </linearGradient>
+                    <linearGradient id="bracket1" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#757575" />
+                      <stop offset="50%" stopColor="#9e9e9e" />
+                      <stop offset="100%" stopColor="#616161" />
+                    </linearGradient>
+                  </defs>
+                  {/* Top rail/bar */}
+                  <rect x="1" y="2" width="22" height="3" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.5" rx="1"/>
+                  {/* Hanging chains/brackets */}
+                  <rect x="4" y="5" width="1.5" height="4" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.3"/>
+                  <rect x="18.5" y="5" width="1.5" height="4" fill="url(#bracket1)" stroke="#424242" strokeWidth="0.3"/>
+                  {/* Main sign board */}
+                  <rect x="2" y="9" width="20" height="12" fill="url(#platformSign1)" stroke="#0d47a1" strokeWidth="0.5" rx="1"/>
+                  {/* White border inside */}
+                  <rect x="3.5" y="10.5" width="17" height="9" fill="none" stroke="white" strokeWidth="0.5" rx="0.5"/>
+                  {/* Train departing - facing away */}
+                  <g transform={isRtl ? "translate(12, 15) scale(-0.65, 0.65)" : "translate(12, 15) scale(0.65, 0.65)"}>
+                    <g transform="translate(-12.5, -5.5)">
+                      <path d="M0,0 L14.2276931,0 C19.8997459,0 25,4.91810349 25,8.79081655 C25,10.0060762 23.9701728,11 22.7127541,11 L0,11 L0,0 Z" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M24.4140625,6.57054014 L17.092219,6.57054014 C16.0819996,6.57054014 15.2560976,5.61001065 15.2560976,4.43511891 L15.2560976,2.29832263 L20.7344813,2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="5.64613821" y="2.29832263" width="6.56077236" height="4.27221751" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="0 6.57054014 2.59695122 6.57054014 2.59695122 2.29832263 0 2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </g>
+                  </g>
+                </svg>
+                {t('trains.headers.originName')}
+              </th>
               <th className="col-station-number">{t('trains.headers.destinationNumber')}</th>
-              <th className="col-station-name">{t('trains.headers.destinationName')}</th>
+              <th className="col-station-name">
+                <svg width="36" height="36" viewBox="0 0 24 24" style={{ marginRight: isRtl ? '0' : '6px', marginLeft: isRtl ? '6px' : '0', verticalAlign: 'middle', filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.3))' }}>
+                  <defs>
+                    <linearGradient id="platformSign2" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#2e7d32" />
+                      <stop offset="50%" stopColor="#388e3c" />
+                      <stop offset="100%" stopColor="#1b5e20" />
+                    </linearGradient>
+                    <linearGradient id="bracket2" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#757575" />
+                      <stop offset="50%" stopColor="#9e9e9e" />
+                      <stop offset="100%" stopColor="#616161" />
+                    </linearGradient>
+                  </defs>
+                  {/* Top rail/bar */}
+                  <rect x="1" y="2" width="22" height="3" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.5" rx="1"/>
+                  {/* Hanging chains/brackets */}
+                  <rect x="4" y="5" width="1.5" height="4" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.3"/>
+                  <rect x="18.5" y="5" width="1.5" height="4" fill="url(#bracket2)" stroke="#424242" strokeWidth="0.3"/>
+                  {/* Main sign board */}
+                  <rect x="2" y="9" width="20" height="12" fill="url(#platformSign2)" stroke="#1b5e20" strokeWidth="0.5" rx="1"/>
+                  {/* White border inside */}
+                  <rect x="3.5" y="10.5" width="17" height="9" fill="none" stroke="white" strokeWidth="0.5" rx="0.5"/>
+                  {/* Train arriving - facing toward */}
+                  <g transform={isRtl ? "translate(12, 15) scale(0.65, 0.65)" : "translate(12, 15) scale(-0.65, 0.65)"}>
+                    <g transform="translate(-12.5, -5.5)">
+                      <path d="M0,0 L14.2276931,0 C19.8997459,0 25,4.91810349 25,8.79081655 C25,10.0060762 23.9701728,11 22.7127541,11 L0,11 L0,0 Z" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M24.4140625,6.57054014 L17.092219,6.57054014 C16.0819996,6.57054014 15.2560976,5.61001065 15.2560976,4.43511891 L15.2560976,2.29832263 L20.7344813,2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="5.64613821" y="2.29832263" width="6.56077236" height="4.27221751" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <polyline points="0 6.57054014 2.59695122 6.57054014 2.59695122 2.29832263 0 2.29832263" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </g>
+                  </g>
+                </svg>
+                {t('trains.headers.destinationName')}
+              </th>
               <th className="col-day">{t('trains.headers.dayOfWeek')}</th>
               <th className="col-actions">{t('trains.headers.actions')}</th>
             </tr>
@@ -369,7 +462,7 @@ function TrainList() {
                 </td>
                 <td className="col-actions">
                   <button onClick={handleSaveNewTrain} className="btn-icon-save" title={t('common.save')}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="saveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="#81c784" />
@@ -382,7 +475,7 @@ function TrainList() {
                     </svg>
                   </button>
                   <button onClick={handleCancelNewTrain} className="btn-icon-cancel" title={t('common.cancel')}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                       <defs>
                         <linearGradient id="cancelGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="#bdbdbd" />
@@ -471,7 +564,7 @@ function TrainList() {
                     {editingTrainNumber === train.number ? (
                       <>
                         <button onClick={handleSaveEditTrain} className="btn-icon-save" title={t('common.save')}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="saveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#81c784" />
@@ -484,7 +577,7 @@ function TrainList() {
                           </svg>
                         </button>
                         <button onClick={handleCancelEdit} className="btn-icon-cancel" title={t('common.cancel')}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" style={{ verticalAlign: 'middle' }}>
                             <defs>
                               <linearGradient id="cancelGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#bdbdbd" />
